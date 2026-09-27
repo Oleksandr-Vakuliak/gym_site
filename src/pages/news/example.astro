@@ -1,0 +1,27 @@
+---
+// Temporary article template; becomes a Markdown content collection in the News task.
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import Placeholder from '../../components/Placeholder.astro';
+---
+
+<Base title="[НОВИНА: заголовок] — SECTOR FITNESS">
+  <PageIntro meta="Стаття · [ДАТА]" title="[НОВИНА: заголовок]" />
+  <article class="container article">
+    <Placeholder label="[ФОТО: обкладинка статті]" ratio="16 / 9" />
+    <p>[ТЕКСТ: вступ до новини, 2–3 речення]</p>
+    <p>[ТЕКСТ: основна частина]</p>
+    <p><a href="/news">← Усі новини та івенти</a></p>
+  </article>
+</Base>
+
+<style>
+  .article {
+    max-width: 800px;
+    padding-bottom: 96px;
+  }
+
+  .article p {
+    margin-top: 24px;
+  }
+</style>

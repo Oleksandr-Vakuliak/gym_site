@@ -1,0 +1,27 @@
+---
+// Visible stand-in for media or content that is not ready yet.
+// Keeps the final aspect ratio so real files drop in without layout shifts.
+interface Props {
+  label: string;
+  ratio?: string;
+}
+const { label, ratio = '16 / 9' } = Astro.props;
+---
+
+<div class="placeholder" style={`aspect-ratio: ${ratio}`}>
+  <span>{label}</span>
+</div>
+
+<style>
+  .placeholder {
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: var(--concrete);
+    border: 2px dashed var(--muted);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: 0.9375rem;
+    text-align: center;
+  }
+</style>

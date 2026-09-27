@@ -5,8 +5,9 @@ Communicate with the owner in Ukrainian; code, commits, PRs and README in Englis
 
 ## Current stage
 
-**Where we stopped (2026-09-27):** stages 1–6 done. Project set up (Astro, README, first commit, GitHub Issues).
-**Next:** first task = **grey-block skeleton of all sections/pages** so the owner can review structure on screen before real layout. Then Hero (checkpoint: owner approves Hero before other sections).
+**Where we stopped (2026-09-27):** stages 1–6 done. Project set up (Astro, README, first commit, GitHub Issues #1–#16). Skeleton (issue #1) built on branch `feat/page-skeleton`, PR open — **waiting for owner's review of the structure on screen**.
+**Next:** owner's corrections to the skeleton → merge → Hero (#2, checkpoint: owner approves Hero before other sections).
+Open question: source/license of `docs/design/sample-photo.jpg` unknown — kept out of Git until known (public repo).
 
 ## Technology (approved 2026-09-27)
 

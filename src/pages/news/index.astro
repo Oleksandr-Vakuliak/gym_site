@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import Placeholder from '../../components/Placeholder.astro';
+---
+
+<Base title="Новини та івенти — SECTOR FITNESS">
+  <PageIntro meta="Сторінка · Новини та івенти" title="Новини та івенти" />
+  <div class="container page-body">
+    <ul class="news">
+      {[1, 2, 3, 4].map((n) => (
+        <li>
+          <Placeholder label={`[ФОТО: новина ${n}]`} ratio="3 / 2" />
+          <p class="news__date">[ДАТА]</p>
+          <h2><a href="/news/example">[НОВИНА {n}: заголовок]</a></h2>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .page-body {
+    padding-bottom: 96px;
+  }
+
+  .news {
+    display: grid;
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .news {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .news__date {
+    margin: 12px 0 4px;
+    color: var(--muted);
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h2 a {
+    text-decoration: none;
+  }
+
+  h2 a:hover {
+    color: var(--amber);
+  }
+</style>
