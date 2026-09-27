@@ -7,7 +7,8 @@ Communicate with the owner in Ukrainian; code, commits, PRs and README in Englis
 
 **Where we stopped (2026-09-27):** stages 1–6 done. Project set up (Astro, README, first commit, GitHub Issues #1–#16). Skeleton (issue #1) built on branch `feat/page-skeleton`, PR open — **waiting for owner's review of the structure on screen**.
 **Next:** owner's corrections to the skeleton → merge → Hero (#2, checkpoint: owner approves Hero before other sections).
-Open question: source/license of `docs/design/sample-photo.jpg` unknown — kept out of Git until known (public repo).
+`docs/design/sample-photo.jpg` (used only in directions.html) has unknown source → stays local, gitignored. Not for the site. Resolved, don't ask again.
+Squash-merge PR #17 so that photo (in the branch's first commit) doesn't reach `main`.
 
 ## Technology (approved 2026-09-27)
 
