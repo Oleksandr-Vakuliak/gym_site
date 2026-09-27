@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SECTOR FITNESS — візуальні напрями</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@700;900&family=Sofia+Sans:wght@400;600&family=Unbounded:wght@600;800&family=Onest:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: #d9dbdc; color: #1a1c1e; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 32px 16px 64px; }
+  .page > h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .page > p { margin: 0 0 32px; max-width: 70ch; line-height: 1.5; }
+  .dir { margin-bottom: 56px; border-radius: 6px; overflow: hidden; }
+  .dir-head { padding: 24px; }
+  .dir-head h2 { margin: 0 0 8px; font-size: 1.25rem; }
+  .dir-head p { margin: 0; max-width: 72ch; line-height: 1.5; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; }
+  .cell { padding: 24px; }
+  .cell h3 { margin: 0 0 16px; font-size: .875rem; font-weight: 600; opacity: .7; }
+  .sw { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: .875rem; }
+  .sw i { width: 40px; height: 40px; border-radius: 4px; flex: none; box-shadow: inset 0 0 0 1px rgba(128,128,128,.35); }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btns small { display: block; width: 100%; font-size: .75rem; opacity: .6; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ---------- A: Сектори / розмітка ---------- */
+  .a { --graphite:#1d2023; --concrete:#34393e; --chalk:#e7e8e6; --amber:#f2a516; --rust:#c2462a;
+       background: var(--graphite); color: var(--chalk); font-family: "Sofia Sans", sans-serif; }
+  .a .dir-head { background: var(--graphite); }
+  .a .grid { background: var(--concrete); }
+  .a .cell { background: var(--graphite); }
+  .a-hero { position: relative; aspect-ratio: 16/8; min-height: 360px; overflow: hidden; background: var(--graphite); }
+  .a-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 30%;
+                filter: grayscale(.35) contrast(1.08) brightness(.8); }
+  .a-hero::before { content:""; position:absolute; inset:0; background: #f2a516; mix-blend-mode: soft-light; opacity:.55; }
+  .a-hero::after { content:""; position:absolute; inset:0;
+                   background: linear-gradient(90deg, rgba(29,32,35,.92) 0%, rgba(29,32,35,.55) 38%, rgba(29,32,35,0) 62%),
+                               linear-gradient(0deg, var(--graphite) 0%, rgba(29,32,35,0) 30%); }
+  .a-letter { position:absolute; right: 4%; top: -6%; z-index: 1; font-family:"Sofia Sans Extra Condensed"; font-weight:900;
+              font-size: clamp(12rem, 34vw, 26rem); line-height:1; color: transparent; -webkit-text-stroke: 2px rgba(242,165,22,.7); }
+  .a-copy { position: relative; z-index: 2; padding: 8% 24px 24px; max-width: 560px; }
+  .a-tag { display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:.875rem; color: var(--amber); margin-bottom: 12px; }
+  .a-tag b { display:inline-grid; place-items:center; width:28px; height:28px; border:2px solid var(--amber); font-family:"Sofia Sans Extra Condensed"; font-size:1.1rem; }
+  .a h4 { font-family:"Sofia Sans Extra Condensed"; font-weight:900; font-size: clamp(2.75rem, 7vw, 5.5rem); line-height:.9; margin:0 0 16px; letter-spacing:.005em; }
+  .a .lead { font-size: 1.125rem; line-height:1.45; margin:0 0 24px; max-width: 42ch; }
+  .a-btn { font: 700 1.125rem "Sofia Sans", sans-serif; padding: 14px 24px; border: 0; border-radius: 2px; cursor: pointer; }
+  .a-btn.primary { background: var(--amber); color: var(--graphite); }
+  .a-btn.primary.hover { background: #ffb938; }
+  .a-btn.primary.focus { outline: 3px solid var(--chalk); outline-offset: 3px; }
+  .a-btn.ghost { background: transparent; color: var(--chalk); box-shadow: inset 0 0 0 2px var(--chalk); }
+  .a-btn.disabled { background: var(--concrete); color: #8b9196; cursor: not-allowed; }
+  .a-ticker { display:flex; gap: 32px; white-space:nowrap; overflow:hidden; padding: 14px 24px; background: var(--graphite);
+              border-top: 2px dashed var(--amber); border-bottom: 2px dashed var(--amber);
+              font-family:"Sofia Sans Extra Condensed"; font-weight:700; font-size:1.5rem; letter-spacing:.02em; }
+  .a-ticker span::after { content:"▸"; color: var(--amber); margin-left: 32px; }
+  .a .spec-d { font-family:"Sofia Sans Extra Condensed"; font-weight:900; font-size: 3rem; line-height: .95; margin:0 0 8px; }
+  .a .spec-b { line-height:1.55; margin:0; max-width: 40ch; }
+
+  /* ---------- B: Денне світло ---------- */
+  .b { --paper:#eef0ee; --ink:#202326; --steel:#6d767d; --signal:#e0521f; --sage:#c9d3cc;
+       background: var(--paper); color: var(--ink); font-family: "Onest", sans-serif; }
+  .b .grid { background: var(--sage); }
+  .b .cell { background: var(--paper); }
+  .b-hero { display:grid; grid-template-columns: 1.05fr 1fr; min-height: 380px; }
+  .b-copy { padding: 48px 24px 32px; display:flex; flex-direction:column; justify-content:center; }
+  .b-hero figure { margin:0; position: relative; }
+  .b-hero img { width:100%; height:100%; object-fit: cover; object-position: 55% 30%; display:block; filter: saturate(.8) contrast(1.05); border-radius: 0 0 0 120px; }
+  .b h4 { font-family:"Unbounded"; font-weight:800; font-size: clamp(2rem, 4.6vw, 3.6rem); line-height:1.02; margin:0 0 16px; }
+  .b .lead { font-size: 1.125rem; line-height:1.5; margin:0 0 24px; max-width: 42ch; }
+  .b-btn { font: 600 1rem "Onest", sans-serif; padding: 15px 24px; border: 0; border-radius: 999px; cursor: pointer; }
+  .b-btn.primary { background: var(--signal); color: #fff; }
+  .b-btn.primary.hover { background: #c4431a; }
+  .b-btn.primary.focus { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .b-btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .b-btn.disabled { background: #d7dbd8; color: #7d858a; cursor: not-allowed; }
+  .b-ticker { display:flex; gap: 28px; white-space:nowrap; overflow:hidden; padding: 16px 24px; background: var(--ink); color: var(--paper);
+              font-family:"Unbounded"; font-weight:600; font-size:1rem; }
+  .b-ticker span::after { content:""; display:inline-block; width:10px; height:10px; border-radius:50%; background: var(--signal); margin-left: 28px; }
+  .b .spec-d { font-family:"Unbounded"; font-weight:800; font-size: 2.1rem; line-height: 1.05; margin:0 0 8px; }
+  .b .spec-b { line-height:1.6; margin:0; max-width: 40ch; }
+  @media (max-width: 860px) { .b-hero { grid-template-columns: 1fr; } .b-hero figure { height: 280px; order: -1; } .b-hero img { border-radius: 0 0 0 64px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>SECTOR FITNESS — два візуальні напрями</h1>
+  <p>Це не макет сайту, а «зразки тканини»: настрій hero, палітра, шрифти, кнопки й біжучий рядок. Фото тимчасове, заголовок — заглушка. Шрифти й кольори можна замінити на твої.</p>
+
+  <!-- A -->
+  <section class="dir a" aria-labelledby="a-title">
+    <div class="dir-head">
+      <h2 id="a-title">А · «Сектори» — темний зал, теплі лампи (рекомендую)</h2>
+      <p>Ідея з назви: зал як мапа з позначеними секторами. Великі контурні літери секторів (A–G), рамки-«таблички» як на навігації в залі, пунктир як розмітка на підлозі. Фото тонуємо в теплу бурштинову «тінь», яка тобі сподобалась. Близько до Gold's за силою типографіки, але без їхньої смуги й кольорів.</p>
+    </div>
+    <div class="a-hero">
+      <img src="sample-photo.jpg" alt="">
+      <div class="a-letter" aria-hidden="true">A</div>
+      <div class="a-copy">
+        <div class="a-tag"><b>A</b> Вільні ваги</div>
+        <h4>[ЗАГОЛОВОК HERO]</h4>
+        <p class="lead">Перше тренування — безкоштовно, з тренером. Покажемо зал, підберемо програму під твій рівень.</p>
+        <div class="btns"><button class="a-btn primary">Записатися на пробне</button><button class="a-btn ghost">Подивитися зал</button></div>
+      </div>
+    </div>
+    <div class="a-ticker" aria-hidden="true"><span>ПЕРШЕ ТРЕНУВАННЯ БЕЗКОШТОВНО</span><span>ЩОДНЯ 7:00–23:00</span><span>[НАСТУПНИЙ ІВЕНТ]</span><span>ПЕРШЕ ТРЕНУВАННЯ БЕЗКОШТОВНО</span></div>
+    <div class="grid">
+      <div class="cell"><h3>Палітра</h3>
+        <div class="sw"><i style="background:#1d2023"></i>Графіт (гумова підлога) #1D2023</div>
+        <div class="sw"><i style="background:#34393e"></i>Бетон #34393E</div>
+        <div class="sw"><i style="background:#e7e8e6"></i>Крейда (текст) #E7E8E6</div>
+        <div class="sw"><i style="background:#f2a516"></i>Бурштин (лампи, дія) #F2A516</div>
+        <div class="sw"><i style="background:#c2462a"></i>Іржа (рідко, акцент) #C2462A</div>
+      </div>
+      <div class="cell"><h3>Шрифти (Google Fonts, OFL — можна комерційно, є кирилиця)</h3>
+        <p class="spec-d">Сектор B · Тренажери</p>
+        <p class="spec-b">Sofia Sans Extra Condensed — заголовки, найближчий безкоштовний до шрифту Gold's. Sofia Sans — основний текст: Зрозумілі тренажери на всі групи м'язів.</p>
+      </div>
+      <div class="cell"><h3>Кнопки і стани</h3>
+        <div class="btns">
+          <small>звичайна · наведення · фокус з клавіатури · недоступна</small>
+          <button class="a-btn primary">Записатися</button>
+          <button class="a-btn primary hover">Записатися</button>
+          <button class="a-btn primary focus">Записатися</button>
+          <button class="a-btn disabled" disabled>Записатися</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="dir b" aria-labelledby="b-title">
+    <div class="dir-head">
+      <h2 id="b-title">Б · «Денне світло» — світлий, дружній зал</h2>
+      <p>Світлий бетонний фон, широкий округлий шрифт заголовків, сигнальний помаранчевий як на тренажерах із фото. Відчуття «тут світло й не страшно» — сильніше для новачків, але далі від Gold's і від темного настрою, який тобі сподобався.</p>
+    </div>
+    <div class="b-hero">
+      <div class="b-copy">
+        <h4>[ЗАГОЛОВОК HERO]</h4>
+        <p class="lead">Перше тренування — безкоштовно, з тренером. Покажемо зал, підберемо програму під твій рівень.</p>
+        <div class="btns"><button class="b-btn primary">Записатися на пробне</button><button class="b-btn ghost">Подивитися зал</button></div>
+      </div>
+      <figure><img src="sample-photo.jpg" alt=""></figure>
+    </div>
+    <div class="b-ticker" aria-hidden="true"><span>Перше тренування безкоштовно</span><span>Щодня 7:00–23:00</span><span>[Наступний івент]</span><span>Перше тренування безкоштовно</span></div>
+    <div class="grid">
+      <div class="cell"><h3>Палітра</h3>
+        <div class="sw"><i style="background:#eef0ee"></i>Світлий бетон #EEF0EE</div>
+        <div class="sw"><i style="background:#202326"></i>Чорнило (текст) #202326</div>
+        <div class="sw"><i style="background:#6d767d"></i>Сталь #6D767D</div>
+        <div class="sw"><i style="background:#e0521f"></i>Сигнальний помаранч #E0521F</div>
+        <div class="sw"><i style="background:#c9d3cc"></i>Шавлія (фон блоків) #C9D3CC</div>
+      </div>
+      <div class="cell"><h3>Шрифти (Google Fonts, OFL — можна комерційно, є кирилиця)</h3>
+        <p class="spec-d">Сектор B · Тренажери</p>
+        <p class="spec-b">Unbounded — заголовки, широкий і округлий. Onest — основний текст: Зрозумілі тренажери на всі групи м'язів.</p>
+      </div>
+      <div class="cell"><h3>Кнопки і стани</h3>
+        <div class="btns">
+          <small>звичайна · наведення · фокус з клавіатури · недоступна</small>
+          <button class="b-btn primary">Записатися</button>
+          <button class="b-btn primary hover">Записатися</button>
+          <button class="b-btn primary focus">Записатися</button>
+          <button class="b-btn disabled" disabled>Записатися</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
