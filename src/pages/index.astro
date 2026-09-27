@@ -5,6 +5,8 @@ import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import Placeholder from '../components/Placeholder.astro';
 import Hero from '../components/Hero.astro';
+import Ticker from '../components/Ticker.astro';
+import Interior from '../components/Interior.astro';
 
 const sectors = [
   'A · Вільні ваги',
@@ -15,6 +17,7 @@ const sectors = [
   'F · Протеїн-бар',
   'G · Балкон',
 ];
+const slogans = ['Перше тренування безкоштовно', 'Щодня 7:00–23:00', '[НАСТУПНИЙ ІВЕНТ: дата]'];
 const steps = ['Пробне з тренером', 'Програма під тебе', 'Перші тижні не сам'];
 const services = ['Тренажерний зал', 'Персональні тренування', 'Групові заняття'];
 const coaches = ['Андрій Коваль', 'Марта Гнатюк', 'Остап Мельник', 'Соломія Бойко'];
@@ -33,16 +36,10 @@ const faq = [
   <Hero />
 
   <!-- 02 · Ticker -->
-  <div class="ticker" aria-label="02 · Біжучий рядок">
-    <p>ПЕРШЕ ТРЕНУВАННЯ БЕЗКОШТОВНО ▸ ЩОДНЯ 7:00–23:00 ▸ [НАСТУПНИЙ ІВЕНТ: дата]</p>
-  </div>
+  <Ticker items={slogans} />
 
-  <Section num={3} name="Фото залу на всю ширину" full>
-    <Placeholder
-      label="[ФОТО: порожній зал, тепле світло, на всю ширину] + плашка «Подивитися зал по секторах»"
-      ratio="21 / 9"
-    />
-  </Section>
+  <!-- 03 · Wide gym interior, entry to the sectors map -->
+  <Interior />
 
   <Section id="sectors" num={4} name="Мапа секторів" title="SECTOR — це про зали всередині залу.">
     <p>Натисни на сектор, щоб зазирнути всередину.</p>
@@ -142,20 +139,6 @@ const faq = [
 </Base>
 
 <style>
-  .ticker {
-    padding: 14px var(--gutter);
-    border-block: 2px dashed var(--amber);
-    overflow: hidden;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.5rem;
-    white-space: nowrap;
-  }
-
-  .ticker p {
-    margin: 0;
-  }
-
   .split {
     display: grid;
     gap: 24px;

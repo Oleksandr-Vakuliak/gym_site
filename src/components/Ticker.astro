@@ -1,0 +1,83 @@
+---
+// Slogan ticker between dashed amber «floor markings».
+// The line is rendered twice so the loop is seamless; the copy is hidden from screen readers.
+interface Props {
+  items: string[];
+}
+const { items } = Astro.props;
+---
+
+<div class="ticker">
+  <p class="visually-hidden">{items.join('. ')}</p>
+  <div class="ticker__track" aria-hidden="true">
+    {[0, 1].map(() => (
+      <ul class="ticker__line">
+        {items.map((item) => (
+          <li>
+            {item}
+            <span class="ticker__sep">▸</span>
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</div>
+
+<style>
+  .ticker {
+    position: relative;
+    padding-block: var(--space-2);
+    border-block: 2px dashed var(--amber);
+    overflow: hidden;
+  }
+
+  .ticker__track {
+    display: flex;
+    width: max-content;
+    animation: ticker 40s linear infinite;
+  }
+
+  .ticker:hover .ticker__track {
+    animation-play-state: paused;
+  }
+
+  .ticker__line {
+    display: flex;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ticker__line li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .ticker__sep {
+    padding-inline: 0.6em;
+    color: var(--amber);
+    font-size: 0.7em;
+  }
+
+  @keyframes ticker {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* No motion: show one static line, cut off at the edge */
+  @media (prefers-reduced-motion: reduce) {
+    .ticker__track {
+      animation: none;
+      padding-inline: var(--gutter);
+    }
+  }
+</style>
