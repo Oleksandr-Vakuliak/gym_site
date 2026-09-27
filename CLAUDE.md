@@ -5,8 +5,11 @@ Communicate with the owner in Ukrainian; code, commits, PRs and README in Englis
 
 ## Current stage
 
-**Where we stopped (2026-09-27):** stages 1–6 done. Project set up (Astro, README, first commit, GitHub Issues #1–#16). Skeleton (issue #1) built on branch `feat/page-skeleton`, PR open — **waiting for owner's review of the structure on screen**.
-**Next:** owner's corrections to the skeleton → merge → Hero (#2, checkpoint: owner approves Hero before other sections).
+**Where we stopped (2026-09-27, end of day):** stages 1–6 done. Skeleton (issue #1) on branch `feat/page-skeleton`, PR #17 open, **owner is still reviewing it on screen**.
+Corrections so far: (1) sectors section 4 now shows the planned layout — desktop: map + panel of the selected sector (photo, amber plate «A · Вільні ваги», description); mobile: row of A–G letter tabs instead of the map (commit 8b71ed7, pushed). Switching logic comes with issue #4. (2) Mobile burger menu — deferred by owner to Hero (#2, already in its scope); the skeleton header scrolls sideways at 375 px, that's expected for now.
+**Next:** ask owner for any further skeleton corrections → when owner says merge: check (375 px, desktop, console, Tab) → squash-merge PR #17 → Hero (#2) incl. sticky header + mobile burger. Hero is a checkpoint: show it to owner before other sections.
+**Media:** owner warned that finding photos/videos will be very hard. Keep building with placeholders at final aspect ratios; don't wait for media. When media becomes the blocker, offer concrete help: exact shot list per placeholder, suggested stock search queries, AI-generation prompts in one consistent grade.
+Dev server: may already be running from an earlier session (Astro says «Another astro dev server is already running») — then just reuse http://localhost:4321.
 `docs/design/sample-photo.jpg` (used only in directions.html) has unknown source → stays local, gitignored. Not for the site. Resolved, don't ask again.
 Squash-merge PR #17 so that photo (in the branch's first commit) doesn't reach `main`.
 
