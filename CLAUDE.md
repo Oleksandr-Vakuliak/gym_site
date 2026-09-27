@@ -5,13 +5,13 @@ Communicate with the owner in Ukrainian; code, commits, PRs and README in Englis
 
 ## Current stage
 
-**Where we stopped (2026-09-27, late evening):** skeleton (#1) squash-merged to `main` (PR #17). Hero (#2) built on branch `feat/hero`, PR open — **waiting for owner's approval (style checkpoint)**. Don't start other sections before that.
-**Next:** owner reviews Hero on screen → corrections → merge → ticker (#next issue) and the following sections one by one.
+**Where we stopped (2026-09-27, late evening):** skeleton (#1) and Hero (#2) approved and merged to `main` (PRs #17, #18). Board created (projects/5), #3 is In Progress.
+**Next:** #3 — ticker + wide gym interior block (needs a photo: empty gym, warm light, 21:9).
 **Media:** owner finds photos very hard to get (videos easier). Keep building with placeholders at final aspect ratios. Work photo by photo, one section at a time (owner asked «по порядку» — don't dump a full shot list). Show candidates as live previews with our grade, not descriptions.
 Dev server: may already be running from an earlier session (Astro says «Another astro dev server is already running») — then just reuse http://localhost:4321.
 `docs/design/sample-photo.jpg` (used only in directions.html) has unknown source → stays local, gitignored. Not for the site. Resolved, don't ask again.
 
-## Hero (built, awaiting approval)
+## Hero (approved 2026-09-27)
 
 - Photo: Pexels, Tima Miroshnichenko (cable crossover, dark gym), see `docs/media-credits.md`. Owner accepted it as the working hero photo, knowing he's quite muscular vs. the brief; can be swapped later without layout changes.
 - Framing chosen by owner after trying variants (centred text over the person, zoomed/shifted, full-height) — final: **original framing**, text left, person centre; desktop `object-position: 28% 30%`, mobile `48% 30%`, text at bottom.
@@ -24,7 +24,7 @@ Dev server: may already be running from an earlier session (Astro says «Another
 
 - **Astro** (static, plain CSS with tokens, no UI framework) + **Vercel** hosting. Chosen over Next.js: content site, minimal JS, news as Markdown (optional Keystatic admin later), built-in i18n for EN later, different stack from vetcare-clinic (Next.js) for portfolio range.
 - Form sending (real vs demo) — decide at the form section.
-- Tasks: GitHub Issues in `Oleksandr-Vakuliak/gym_site`. Substantial changes via branch + PR.
+- Tasks: GitHub Issues in `Oleksandr-Vakuliak/gym_site`, tracked on the board https://github.com/users/Oleksandr-Vakuliak/projects/5 (Todo / In Progress / Done — move cards as work progresses). Substantial changes via branch + PR.
 - Dev server: `npm run dev` → http://localhost:4321 (launch config `dev`).
 - `assets/originals/` (owner's media) is gitignored; optimized copies go to `src/assets/`.
 
