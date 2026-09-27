@@ -1,0 +1,46 @@
+---
+// Skeleton wrapper for a home page section: number, working name, optional heading.
+interface Props {
+  id?: string;
+  num: number;
+  name: string;
+  title?: string;
+  full?: boolean;
+}
+const { id, num, name, title, full = false } = Astro.props;
+---
+
+<section id={id} class="section" aria-label={title ? undefined : name}>
+  <div class="container">
+    <p class="section__meta">{String(num).padStart(2, '0')} · {name}</p>
+    {title && <h2>{title}</h2>}
+  </div>
+  <div class={full ? 'section__body' : 'container section__body'}>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: clamp(48px, 8vw, 96px);
+    border-top: 2px dashed var(--concrete);
+  }
+
+  .section__meta {
+    margin: 0 0 12px;
+    color: var(--amber);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    max-width: 20ch;
+  }
+
+  .section__body {
+    margin-top: 24px;
+  }
+</style>

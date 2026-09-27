@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Placeholder from '../components/Placeholder.astro';
+---
+
+<Base title="Розклад групових занять — SECTOR FITNESS">
+  <PageIntro meta="Сторінка · Розклад" title="Розклад групових занять">
+    <p>Зал працює щодня 7:00–23:00.</p>
+  </PageIntro>
+  <div class="container page-body">
+    <Placeholder
+      label="[РОЗКЛАД: тиждень Пн–Нд · на мобільному вкладки по днях · дані з docs/content.md]"
+      ratio="16 / 7"
+    />
+  </div>
+</Base>
+
+<style>
+  .page-body {
+    padding-bottom: 96px;
+  }
+</style>

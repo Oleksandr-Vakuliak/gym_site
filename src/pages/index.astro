@@ -1,17 +1,360 @@
 ---
+// Skeleton of the home page: every approved section as a labelled grey block.
+// Real layout replaces each block section by section (see GitHub Issues).
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import Placeholder from '../components/Placeholder.astro';
 
+const sectors = [
+  'A · Вільні ваги',
+  'B · Тренажери',
+  'C · Кардіо',
+  'D · Функціонал',
+  'E · Студія',
+  'F · Протеїн-бар',
+  'G · Балкон',
+];
+const steps = ['Пробне з тренером', 'Програма під тебе', 'Перші тижні не сам'];
+const services = ['Тренажерний зал', 'Персональні тренування', 'Групові заняття'];
+const coaches = ['Андрій Коваль', 'Марта Гнатюк', 'Остап Мельник', 'Соломія Бойко'];
+const faq = [
+  'Я ніколи не був у залі. Мені можна?',
+  'Що взяти на перше тренування?',
+  'Чи є роздягальні й душ?',
+  'Можна заморозити абонемент?',
+  'З якого віку можна тренуватися?',
+  'Чи є парковка?',
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="SECTOR FITNESS — зал у Львові, пробне тренування безкоштовно">
+  <!-- 01 · Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__media">
+      <Placeholder label="[ФОТО: hero, сильна впевнена людина в русі, місце під текст зліва]" ratio="auto" />
+    </div>
+    <div class="container hero__content">
+      <p class="meta">01 · Hero</p>
+      <h1 id="hero-title">[ЗАГОЛОВОК HERO: придумає власник]</h1>
+      <p class="lead">
+        Перше тренування — безкоштовно, з тренером. Покажемо зал, підберемо програму під твій рівень.
+      </p>
+      <div class="actions">
+        <a class="btn btn--primary" href="#booking">Записатися на пробне</a>
+        <a class="btn btn--ghost" href="#sectors">Подивитися зал</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Ticker -->
+  <div class="ticker" aria-label="02 · Біжучий рядок">
+    <p>ПЕРШЕ ТРЕНУВАННЯ БЕЗКОШТОВНО ▸ ЩОДНЯ 7:00–23:00 ▸ [НАСТУПНИЙ ІВЕНТ: дата]</p>
+  </div>
+
+  <Section num={3} name="Фото залу на всю ширину" full>
+    <Placeholder
+      label="[ФОТО: порожній зал, тепле світло, на всю ширину] + плашка «Подивитися зал по секторах»"
+      ratio="21 / 9"
+    />
+  </Section>
+
+  <Section id="sectors" num={4} name="Мапа секторів" title="SECTOR — це про зали всередині залу.">
+    <p>Натисни на сектор, щоб зазирнути всередину.</p>
+    <div class="split">
+      <div class="sectors__map">
+        <Placeholder label="[МАПА: ізометрична SVG-схема залу з секторами A–G, натискання вибирає сектор]" ratio="4 / 3" />
+      </div>
+      <!-- Mobile: the map is too small to tap, sectors are picked from a row of letters instead -->
+      <ul class="sectors__tabs" aria-label="Сектори (на мобільному замість мапи)">
+        {sectors.map((s, i) => <li class:list={{ 'is-active': i === 0 }}>{s.charAt(0)}</li>)}
+      </ul>
+      <div class="sectors__panel">
+        <Placeholder label="[ФОТО: вибраний сектор, одразу — A]" ratio="3 / 2" />
+        <p class="plate">{sectors[0]}</p>
+        <p class="note">[ТЕКСТ: опис сектора, 2–3 речення]. Фото й опис змінюються, коли вибираєш інший сектор.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section num={5} name="Як ми допомагаємо почати" title="Не знаєш, з чого почати? Це нормально.">
+    <ol class="grid grid--3">
+      {steps.map((s) => <li class="box">{s}</li>)}
+    </ol>
+  </Section>
+
+  <Section id="services" num={6} name="Послуги" title="Послуги">
+    <div class="grid grid--3">
+      {services.map((s) => (
+        <div>
+          <Placeholder label={`[ВІДЕО: ${s}, 5–10 с]`} ratio="4 / 5" />
+          <h3 class="card-title">{s}</h3>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="prices" num={7} name="Ціни" title="Ціни">
+    <Placeholder label="[ТАБЛИЦЯ ЦІН: 7 позицій із docs/content.md] + рядок про корпоративні абонементи" ratio="16 / 6" />
+  </Section>
+
+  <Section num={8} name="Тренери" title="Тренери">
+    <div class="grid grid--4">
+      {coaches.map((c) => (
+        <div>
+          <Placeholder label="[ФОТО: тренер, пояс або повний зріст]" ratio="3 / 4" />
+          <h3 class="card-title">{c}</h3>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="events" num={9} name="Івенти" title="Вечори, коли зал звучить інакше." full>
+    <Placeholder label="[ФОТО: діджей на балконі над залом, атмосферне, на всю ширину]" ratio="21 / 9" />
+    <div class="container grid grid--3 after-media">
+      <div class="box">[ІВЕНТ 1: назва, дата]</div>
+      <div class="box">[ІВЕНТ 2: назва, дата]</div>
+      <div class="box">[ІВЕНТ 3: назва, дата]</div>
+    </div>
+    <div class="container"><a href="/news">Усі новини та івенти →</a></div>
+  </Section>
+
+  <Section id="bar" num={10} name="Протеїн-бар" title="Відновлення — одразу після тренування.">
+    <div class="split">
+      <Placeholder label="[ФОТО: барна стійка з шейками]" ratio="4 / 3" />
+      <Placeholder label="[МЕНЮ: 6 позицій із цінами]" ratio="4 / 3" />
+    </div>
+  </Section>
+
+  <Section num={11} name="Галерея" title="Галерея" full>
+    <div class="gallery" tabindex="0" role="region" aria-label="Галерея фото, прокручується вбік">
+      {[1, 2, 3].map((row) => (
+        <div class="gallery__row">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <Placeholder label={`[ФОТО ${row}.${n}]`} ratio={n % 2 ? '3 / 2' : '4 / 5'} />
+          ))}
+        </div>
+      ))}
+    </div>
+    <p class="container note">Горизонтальне прокручування коліщатком миші, фото відкривається без обрізання.</p>
+  </Section>
+
+  <Section num={12} name="FAQ" title="Часті питання">
+    <ul class="list">
+      {faq.map((q) => <li>{q}</li>)}
+    </ul>
+  </Section>
+
+  <Section id="contacts" num={13} name="Запис на пробне + контакти" title="Запишись на пробне тренування">
+    <div class="split" id="booking">
+      <Placeholder label="[ФОРМА: ім'я, телефон · стани: заповнення, надсилання, успіх, помилка]" ratio="4 / 3" />
+      <div>
+        <Placeholder label="[СТИЛІЗОВАНА МАПА без реальної мітки]" ratio="4 / 3" />
+        <p>м. Львів, вул. Атлетична, 12 · +380 00 000 00 00 · щодня 7:00–23:00</p>
+      </div>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .meta {
+    margin: 0 0 12px;
+    color: var(--amber);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .hero {
+    position: relative;
+    min-height: min(90vh, 820px);
+    display: grid;
+    align-items: end;
+    padding-block: 48px;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    display: grid;
+  }
+
+  .hero__media :global(.placeholder) {
+    place-items: start end;
+    border-radius: 0;
+  }
+
+  .hero__content {
+    position: relative;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    max-width: 14ch;
+  }
+
+  .lead {
+    max-width: 42ch;
+    font-size: 1.1875rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .ticker {
+    padding: 14px var(--gutter);
+    border-block: 2px dashed var(--amber);
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    white-space: nowrap;
+  }
+
+  .ticker p {
+    margin: 0;
+  }
+
+  .split {
+    display: grid;
+    gap: 24px;
+  }
+
+  .grid {
+    display: grid;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .split {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid--4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 480px) and (max-width: 767px) {
+    .grid--4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .box {
+    padding: 24px;
+    min-height: 120px;
+    background: var(--concrete);
+    border-radius: var(--radius);
+    font-weight: 600;
+  }
+
+  .card-title {
+    margin-top: 12px;
+    font-size: 1.75rem;
+  }
+
+  .list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .list li {
+    padding: 14px 16px;
+    border: 2px dashed var(--concrete);
+    font-weight: 600;
+  }
+
+  .sectors__map {
+    display: none;
+  }
+
+  .sectors__tabs {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sectors__tabs li {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    border: 2px dashed var(--concrete);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+
+  .sectors__tabs .is-active {
+    border: 2px solid var(--amber);
+    color: var(--amber);
+  }
+
+  .sectors__panel {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+
+  .plate {
+    justify-self: start;
+    margin: 0;
+    padding: 6px 12px;
+    background: var(--amber);
+    color: var(--graphite);
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
+    .sectors__map {
+      display: block;
+    }
+
+    .sectors__tabs {
+      display: none;
+    }
+  }
+
+  .after-media {
+    margin-block: 24px;
+  }
+
+  .gallery {
+    display: grid;
+    gap: 12px;
+    overflow-x: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .gallery__row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .gallery__row :global(.placeholder) {
+    flex: none;
+    height: 200px;
+  }
+
+  .note {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+</style>

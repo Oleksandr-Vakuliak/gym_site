@@ -1,0 +1,34 @@
+---
+// Heading block for inner pages.
+interface Props {
+  meta: string;
+  title: string;
+}
+const { meta, title } = Astro.props;
+---
+
+<div class="container intro">
+  <p class="intro__meta">{meta}</p>
+  <h1>{title}</h1>
+  <slot />
+</div>
+
+<style>
+  .intro {
+    padding-block: clamp(48px, 8vw, 96px) 32px;
+  }
+
+  .intro__meta {
+    margin: 0 0 12px;
+    color: var(--amber);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(2.75rem, 8vw, 5rem);
+    max-width: 16ch;
+  }
+</style>

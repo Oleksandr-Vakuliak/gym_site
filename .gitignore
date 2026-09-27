@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # owner-provided original media (large); optimized copies live in src/assets
 assets/originals/
+
+# photo with unknown source/license, keep local until confirmed
+docs/design/sample-photo.jpg
