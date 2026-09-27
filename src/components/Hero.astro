@@ -1,0 +1,140 @@
+---
+import { Picture } from 'astro:assets';
+import heroPhoto from '../assets/hero-cable-crossover.jpg';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__media">
+    <Picture
+      src={heroPhoto}
+      alt=""
+      formats={['avif', 'webp']}
+      widths={[640, 960, 1280, 1920, 2560, 3600]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+
+  <div class="container hero__content">
+    <p class="plate">SECTOR FITNESS · Львів</p>
+    <h1 id="hero-title">[ЗАГОЛОВОК ВІД ВЛАСНИКА]</h1>
+    <p class="lead">
+      Перше тренування — безкоштовно, з тренером. Покажемо зал, підберемо програму під твій рівень.
+    </p>
+    <div class="actions">
+      <a class="btn btn--primary" href="#booking">Записатися на пробне</a>
+      <a class="btn btn--ghost" href="#sectors">Подивитися зал</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100svh;
+    /* the header sits on top of the photo */
+    margin-top: calc(-1 * var(--header-h));
+    padding: calc(var(--header-h) + var(--space-6)) 0 var(--space-6);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 48% 30%;
+    /* shared photo grade: lightly muted, warm */
+    filter: saturate(0.82) contrast(1.02);
+  }
+
+  /* warm amber tint + gradient that keeps text readable */
+  .hero__media::before,
+  .hero__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero__media::before {
+    background: var(--amber);
+    mix-blend-mode: soft-light;
+    opacity: 0.14;
+  }
+
+  .hero__media::after {
+    background:
+      linear-gradient(0deg, var(--graphite) 0%, rgb(29 32 35 / 0.85) 40%, rgb(29 32 35 / 0) 70%),
+      linear-gradient(180deg, rgb(29 32 35 / 0.6) 0%, rgb(29 32 35 / 0) 18%);
+  }
+
+  .plate {
+    display: inline-block;
+    margin: 0 0 var(--space-3);
+    padding: 4px 10px;
+    background: var(--amber);
+    color: var(--graphite);
+    font-weight: 700;
+    font-size: var(--fs-small);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin-bottom: var(--space-4);
+    font-size: var(--fs-display);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .lead {
+    max-width: 40ch;
+    margin: 0;
+    font-size: var(--fs-lead);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+  }
+
+  .actions .btn {
+    text-align: center;
+  }
+
+  @media (min-width: 600px) {
+    .actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (min-width: 960px) {
+    .hero {
+      align-items: center;
+    }
+
+    .hero__media :global(img) {
+      object-position: 28% 30%;
+    }
+
+    .hero__media::after {
+      background:
+        linear-gradient(90deg, rgb(29 32 35 / 0.95) 0%, rgb(29 32 35 / 0.8) 30%, rgb(29 32 35 / 0) 60%),
+        linear-gradient(0deg, var(--graphite) 0%, rgb(29 32 35 / 0) 25%),
+        linear-gradient(180deg, rgb(29 32 35 / 0.6) 0%, rgb(29 32 35 / 0) 15%);
+    }
+  }
+</style>

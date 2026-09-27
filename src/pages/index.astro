@@ -4,6 +4,7 @@
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import Placeholder from '../components/Placeholder.astro';
+import Hero from '../components/Hero.astro';
 
 const sectors = [
   'A · Вільні ваги',
@@ -27,24 +28,9 @@ const faq = [
 ];
 ---
 
-<Base title="SECTOR FITNESS — зал у Львові, пробне тренування безкоштовно">
+<Base title="SECTOR FITNESS — зал у Львові, пробне тренування безкоштовно" overlayHeader>
   <!-- 01 · Hero -->
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__media">
-      <Placeholder label="[ФОТО: hero, сильна впевнена людина в русі, місце під текст зліва]" ratio="auto" />
-    </div>
-    <div class="container hero__content">
-      <p class="meta">01 · Hero</p>
-      <h1 id="hero-title">[ЗАГОЛОВОК HERO: придумає власник]</h1>
-      <p class="lead">
-        Перше тренування — безкоштовно, з тренером. Покажемо зал, підберемо програму під твій рівень.
-      </p>
-      <div class="actions">
-        <a class="btn btn--primary" href="#booking">Записатися на пробне</a>
-        <a class="btn btn--ghost" href="#sectors">Подивитися зал</a>
-      </div>
-    </div>
-  </section>
+  <Hero />
 
   <!-- 02 · Ticker -->
   <div class="ticker" aria-label="02 · Біжучий рядок">
@@ -156,55 +142,6 @@ const faq = [
 </Base>
 
 <style>
-  .meta {
-    margin: 0 0 12px;
-    color: var(--amber);
-    font-weight: 600;
-    font-size: 0.875rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .hero {
-    position: relative;
-    min-height: min(90vh, 820px);
-    display: grid;
-    align-items: end;
-    padding-block: 48px;
-  }
-
-  .hero__media {
-    position: absolute;
-    inset: 0;
-    display: grid;
-  }
-
-  .hero__media :global(.placeholder) {
-    place-items: start end;
-    border-radius: 0;
-  }
-
-  .hero__content {
-    position: relative;
-  }
-
-  h1 {
-    font-size: clamp(3rem, 9vw, 6.5rem);
-    max-width: 14ch;
-  }
-
-  .lead {
-    max-width: 42ch;
-    font-size: 1.1875rem;
-  }
-
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 24px;
-  }
-
   .ticker {
     padding: 14px var(--gutter);
     border-block: 2px dashed var(--amber);

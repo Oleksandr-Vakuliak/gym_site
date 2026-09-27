@@ -9,6 +9,7 @@ interface Props {
 }
 const {
   title,
+  overlayHeader = false,
   description = 'SECTOR FITNESS — зал у Львові, де новачкові не страшно почати. Перше тренування з тренером безкоштовно.',
 } = Astro.props;
 ---
@@ -30,7 +31,7 @@ const {
   </head>
   <body>
     <a class="skip-link btn btn--primary" href="#main">Перейти до змісту</a>
-    <Header />
+    <Header overlay={overlayHeader} />
     <main id="main">
       <slot />
     </main>

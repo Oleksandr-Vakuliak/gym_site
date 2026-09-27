@@ -5,13 +5,20 @@ Communicate with the owner in Ukrainian; code, commits, PRs and README in Englis
 
 ## Current stage
 
-**Where we stopped (2026-09-27, end of day):** stages 1–6 done. Skeleton (issue #1) on branch `feat/page-skeleton`, PR #17 open, **owner is still reviewing it on screen**.
-Corrections so far: (1) sectors section 4 now shows the planned layout — desktop: map + panel of the selected sector (photo, amber plate «A · Вільні ваги», description); mobile: row of A–G letter tabs instead of the map (commit 8b71ed7, pushed). Switching logic comes with issue #4. (2) Mobile burger menu — deferred by owner to Hero (#2, already in its scope); the skeleton header scrolls sideways at 375 px, that's expected for now.
-**Next:** ask owner for any further skeleton corrections → when owner says merge: check (375 px, desktop, console, Tab) → squash-merge PR #17 → Hero (#2) incl. sticky header + mobile burger. Hero is a checkpoint: show it to owner before other sections.
-**Media:** owner warned that finding photos/videos will be very hard. Keep building with placeholders at final aspect ratios; don't wait for media. When media becomes the blocker, offer concrete help: exact shot list per placeholder, suggested stock search queries, AI-generation prompts in one consistent grade.
+**Where we stopped (2026-09-27, late evening):** skeleton (#1) squash-merged to `main` (PR #17). Hero (#2) built on branch `feat/hero`, PR open — **waiting for owner's approval (style checkpoint)**. Don't start other sections before that.
+**Next:** owner reviews Hero on screen → corrections → merge → ticker (#next issue) and the following sections one by one.
+**Media:** owner finds photos very hard to get (videos easier). Keep building with placeholders at final aspect ratios. Work photo by photo, one section at a time (owner asked «по порядку» — don't dump a full shot list). Show candidates as live previews with our grade, not descriptions.
 Dev server: may already be running from an earlier session (Astro says «Another astro dev server is already running») — then just reuse http://localhost:4321.
 `docs/design/sample-photo.jpg` (used only in directions.html) has unknown source → stays local, gitignored. Not for the site. Resolved, don't ask again.
-Squash-merge PR #17 so that photo (in the branch's first commit) doesn't reach `main`.
+
+## Hero (built, awaiting approval)
+
+- Photo: Pexels, Tima Miroshnichenko (cable crossover, dark gym), see `docs/media-credits.md`. Owner accepted it as the working hero photo, knowing he's quite muscular vs. the brief; can be swapped later without layout changes.
+- Framing chosen by owner after trying variants (centred text over the person, zoomed/shifted, full-height) — final: **original framing**, text left, person centre; desktop `object-position: 28% 30%`, mobile `48% 30%`, text at bottom.
+- Photo grade (use for all site photos): `saturate(0.82) contrast(1.02)` + amber soft-light overlay at 0.14. Owner rejected the heavier grade (0.55 / 0.35) as «low quality» — it amplified grain.
+- Headline: placeholder until owner writes it; keep it short (2–5 words) — longer text covers the person.
+- Header: transparent over the hero on the home page (`<Base overlayHeader>`), solid graphite after scrolling; mobile = logo + «Пробне» CTA + burger with full-screen menu (Esc closes, focus returns).
+- Spacing and type scales are tokens in `src/styles/global.css` (`--space-*`, `--fs-*`, `--header-h`).
 
 ## Technology (approved 2026-09-27)
 
