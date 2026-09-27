@@ -5,8 +5,8 @@ Communicate with the owner in Ukrainian; code, commits, PRs and README in Englis
 
 ## Current stage
 
-**Where we stopped (2026-09-27, late evening):** skeleton (#1) and Hero (#2) approved and merged to `main` (PRs #17, #18). Board created (projects/5), #3 is In Progress.
-**Next:** #3 — ticker + wide gym interior block (needs a photo: empty gym, warm light, 21:9).
+**Where we stopped (2026-09-27, night):** #3 in progress on branch `ticker-interior` (pushed, no PR yet). Ticker done: content in `src/data/ticker.json` (permanent slogans + amber promos with `until` date, auto-hidden when expired — owner's idea: promo in the line hooks visitors, owner can add/remove promos), no pause on hover (owner asked), ~4 s per item. Interior block done with placeholder (21:9 desktop, 4:5 mobile) + amber plate «A–G ┆ Подивитися зал по секторах →» → #sectors.
+**Next:** (1) ask if ticker speed is OK; (2) owner's demo promo text (placeholder now; then test expiry with a past date together); (3) find 3–4 Pexels candidates for the empty-gym photo and show them live in the block with our grade; then PR for #3 → owner's «так» → merge. Owner agreed to a visual admin (Keystatic) for ticker later, together with news.
 **Media:** owner finds photos very hard to get (videos easier). Keep building with placeholders at final aspect ratios. Work photo by photo, one section at a time (owner asked «по порядку» — don't dump a full shot list). Show candidates as live previews with our grade, not descriptions.
 Dev server: may already be running from an earlier session (Astro says «Another astro dev server is already running») — then just reuse http://localhost:4321.
 `docs/design/sample-photo.jpg` (used only in directions.html) has unknown source → stays local, gitignored. Not for the site. Resolved, don't ask again.
