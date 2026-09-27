@@ -37,6 +37,15 @@ docs/             brief notes, content drafts, references, design directions
 assets/originals/ owner's original media (not committed)
 ```
 
+## Editing the ticker
+
+The running line under the hero is filled from `src/data/ticker.json`:
+
+- `slogans` — always shown.
+- `promos` — shown first, in amber, until the `until` date (inclusive, `YYYY-MM-DD`). Expired promos are skipped at build time and also hidden in the browser, so an old promo never appears even if the site is not rebuilt. An empty list (`[]`) leaves only the slogans.
+
+A visual editor for this file can be added later together with the news admin.
+
 ## Checks before merging
 
 - Layout at 375 px and desktop width

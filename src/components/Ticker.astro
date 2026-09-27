@@ -1,20 +1,33 @@
 ---
-// Slogan ticker between dashed amber «floor markings».
-// The line is rendered twice so the loop is seamless; the copy is hidden from screen readers.
-interface Props {
-  items: string[];
-}
-const { items } = Astro.props;
+// Ticker between dashed amber «floor markings»: permanent slogans + time-limited promos.
+// Content lives in src/data/ticker.json so the owner can edit it without touching markup.
+// Promos past their `until` date are dropped at build time and hidden in the browser
+// by a small script, so a stale promo never shows even if the site isn't rebuilt.
+import ticker from '../data/ticker.json';
+
+type Item = { text: string; until?: string; promo: boolean };
+
+const today = new Date().toISOString().slice(0, 10);
+const promos: Item[] = ticker.promos
+  .filter((p) => !p.until || p.until >= today)
+  .map((p) => ({ ...p, promo: true }));
+const slogans: Item[] = ticker.slogans.map((text) => ({ text, promo: false }));
+// promos first: they are the reason to read the line
+const items = [...promos, ...slogans];
+// repeat short lists so one half of the loop is always wider than the screen
+const half = Array.from({ length: Math.ceil(6 / items.length) }, () => items).flat();
 ---
 
-<div class="ticker">
-  <p class="visually-hidden">{items.join('. ')}</p>
+<div class="ticker" style={`--duration: ${half.length * 4}s`}>
+  <ul class="visually-hidden">
+    {items.map((item) => <li data-until={item.until}>{item.text}</li>)}
+  </ul>
   <div class="ticker__track" aria-hidden="true">
     {[0, 1].map(() => (
       <ul class="ticker__line">
-        {items.map((item) => (
-          <li>
-            {item}
+        {half.map((item) => (
+          <li class:list={{ 'is-promo': item.promo }} data-until={item.until}>
+            {item.text}
             <span class="ticker__sep">▸</span>
           </li>
         ))}
@@ -22,6 +35,17 @@ const { items } = Astro.props;
     ))}
   </div>
 </div>
+
+<script>
+  // Hide promos that expired after the last build (dates are inclusive, local time).
+  const d = new Date();
+  const today = [d.getFullYear(), d.getMonth() + 1, d.getDate()]
+    .map((n) => String(n).padStart(2, '0'))
+    .join('-');
+  document.querySelectorAll<HTMLElement>('.ticker [data-until]').forEach((el) => {
+    if (el.dataset.until! < today) el.remove();
+  });
+</script>
 
 <style>
   .ticker {
@@ -34,7 +58,8 @@ const { items } = Astro.props;
   .ticker__track {
     display: flex;
     width: max-content;
-    animation: ticker 40s linear infinite;
+    /* ~4 s per item keeps the same speed however many items there are */
+    animation: ticker var(--duration) linear infinite;
   }
 
   .ticker__line {
@@ -55,6 +80,10 @@ const { items } = Astro.props;
     line-height: 1.1;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+  }
+
+  .ticker__line .is-promo {
+    color: var(--amber);
   }
 
   .ticker__sep {
