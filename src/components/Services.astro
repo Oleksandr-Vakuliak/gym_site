@@ -12,6 +12,8 @@ const services = [
     text: 'Тренер будує програму під твою мету й стежить за технікою на кожному занятті. Найкоротший шлях до результату — і найспокійніший старт для новачка.',
     link: { href: '#booking', label: 'Записатися на пробне' },
     ratio: '4 / 5',
+    video: '/video/personal-training.mp4',
+    poster: '/video/personal-training.jpg',
   },
   {
     key: 'gym',
@@ -34,7 +36,10 @@ const services = [
   {services.map((s, i) => (
     <li class:list={['service', { 'service--lead': i === 0 }]}>
       <div class="service__media">
-        <ServiceVideo ratio={s.ratio} label={`[ВІДЕО: ${s.title}, 5–10 с, без звуку]`} />
+        <ServiceVideo
+          src={'video' in s ? s.video : undefined}
+          poster={'poster' in s ? s.poster : undefined}
+          ratio={s.ratio} label={`[ВІДЕО: ${s.title}, 5–10 с, без звуку]`} />
         {'tag' in s && <span class="service__tag">{s.tag}</span>}
       </div>
       <div class="service__body">
