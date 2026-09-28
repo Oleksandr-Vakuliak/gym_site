@@ -19,6 +19,7 @@
   .head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
   .title { font-weight: 700; }
   .title small { display: block; font-weight: 400; color: var(--muted); }
+  .attach, .hint { overflow-wrap: anywhere; }
   .attach { margin: 8px 0 0; color: var(--amber); font-weight: 600; }
   pre { margin: 12px 0 0; padding: 12px; background: #15171a; border-radius: 2px; white-space: pre-wrap; font-size: 14px; color: var(--muted); max-height: 140px; overflow: auto; }
   .btns { display: flex; gap: 8px; }
@@ -62,7 +63,7 @@ const GAL_V = 'Generate: vertical 2:3 image. Keep every person fully in frame. '
 const SECTIONS = [
   { name: 'Старт (один раз)', now: true, steps: [
     { t: 'Налаштувати стиль', s: 'ChatGPT запам’ятає, як виглядає наш зал. Картинку не малює, лише підтверджує.',
-      attach: 'Перед відправкою прикріпи (скріпка в ChatGPT) фото залу: C:\Work-projects\gym_site\assets\originals\interior\pexels-eyecon-design-17211446.jpg', p: SETUP },
+      attach: 'Перед відправкою прикріпи (скріпка в ChatGPT) фото залу: C:\\Work-projects\\gym_site\\assets\\originals\\interior\\pexels-eyecon-design-17211446.jpg', p: SETUP },
   ]},
   { name: 'Мапа секторів', now: true, folder: 'assets/originals/sectors/', steps: [
     { t: 'A · Вільні ваги', p: EMPTY43 + 'The free weights zone: long dumbbell rack along a dark stone wall, a flat bench and two power racks with loaded barbells, rubber lifting platform with white floor markings.' },
@@ -117,7 +118,7 @@ for (const sec of SECTIONS) {
   const h = document.createElement('h2');
   h.innerHTML = sec.name + (sec.now ? '<span class="now">зараз</span>' : '');
   list.append(h);
-  const hint = [sec.hint, sec.folder && 'Готові фото клади в C:\Work-projects\gym_site\' + sec.folder, !sec.now && 'Поки не треба, дійдемо до цієї секції пізніше.'].filter(Boolean).join(' ');
+  const hint = [sec.hint, sec.folder && 'Готові фото клади в C:\\Work-projects\\gym_site\\' + sec.folder.replaceAll('/', '\\'), !sec.now && 'Поки не треба, дійдемо до цієї секції пізніше.'].filter(Boolean).join(' ');
   if (hint) { const p = document.createElement('p'); p.className = 'hint'; p.textContent = hint; list.append(p); }
   for (const st of sec.steps) {
     n++;
@@ -126,7 +127,7 @@ for (const sec of SECTIONS) {
     el.className = 'step' + (done[id] ? ' done' : '');
     el.innerHTML = `<div class="head"><div class="title">Крок ${n}. ${st.t}${st.s ? `<small>${st.s}</small>` : ''}</div>
       <div class="btns"><button class="copy" type="button">Копіювати</button><button class="mark" type="button">${done[id] ? 'Повернути' : 'Готово'}</button></div></div>
-      ${st.attach ? `<p class="attach">📎 ${st.attach}</p>` : ''}<pre></pre>`;
+      ${st.attach ? `<p class="attach">${st.attach}</p>` : ''}<pre></pre>`;
     el.querySelector('pre').textContent = st.p;
     const copy = el.querySelector('.copy');
     copy.onclick = async () => {
