@@ -1,7 +1,7 @@
 ---
 // Three services with a short video each. Personal training is the lead block:
 // it's the base path for beginners, the site's main audience.
-// Add `video` / `poster` (files in public/video/) when the owner provides them.
+// Clips live in public/video/ (cropped, muted, ~0.5 MB each; sources in docs/media-credits.md).
 import ServiceVideo from './ServiceVideo.astro';
 
 const services = [
@@ -21,6 +21,8 @@ const services = [
     text: 'Вільні ваги, тренажери й кардіо — тренуйся у своєму темпі. Потрібна порада — тренер у залі поруч.',
     link: { href: '#prices', label: 'Ціни на абонементи' },
     ratio: '3 / 2',
+    video: '/video/gym-floor.mp4',
+    poster: '/video/gym-floor.jpg',
   },
   {
     key: 'group',
@@ -28,6 +30,8 @@ const services = [
     text: 'Функціональні тренування, розтяжка та інші формати в студії. Компанія тримає в тонусі краще за будильник.',
     link: { href: '/schedule', label: 'Розклад занять' },
     ratio: '3 / 2',
+    video: '/video/group-classes.mp4',
+    poster: '/video/group-classes.jpg',
   },
 ] as const;
 ---
@@ -37,8 +41,8 @@ const services = [
     <li class:list={['service', { 'service--lead': i === 0 }]}>
       <div class="service__media">
         <ServiceVideo
-          src={'video' in s ? s.video : undefined}
-          poster={'poster' in s ? s.poster : undefined}
+          src={s.video}
+          poster={s.poster}
           ratio={s.ratio} label={`[ВІДЕО: ${s.title}, 5–10 с, без звуку]`} />
         {'tag' in s && <span class="service__tag">{s.tag}</span>}
       </div>
