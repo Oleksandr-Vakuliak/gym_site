@@ -1,0 +1,98 @@
+---
+// «How we help you start»: three steps on a dashed amber track, like lane
+// markings on the gym floor; the track ends at the trial booking button.
+// Horizontal on desktop, vertical on phones.
+const steps = [
+  { title: 'Пробне з тренером', text: 'Приходиш, знайомишся із залом і тренером. Нічого не купуєш.' },
+  { title: 'Програма під тебе', text: 'Тренер питає про мету, досвід і обмеження — і складає план на перші тижні.' },
+  { title: 'Перші тижні не сам', text: 'Тренер у залі підкаже техніку й поправить, коли треба.' },
+];
+---
+
+<div class="start">
+  <ol class="start__track">
+    {steps.map((s, i) => (
+      <li class="start__step">
+        <span class="start__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <h3 class="start__title">{s.title}</h3>
+        <p class="start__text">{s.text}</p>
+      </li>
+    ))}
+  </ol>
+  <a class="btn btn--primary start__cta" href="#booking">Записатися на пробне</a>
+</div>
+
+<style>
+  .start {
+    --line: 2px dashed var(--amber);
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+  }
+
+  .start__track {
+    display: grid;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0 0 0 var(--space-5);
+    border-left: var(--line);
+    list-style: none;
+  }
+
+  .start__step {
+    position: relative;
+  }
+
+  /* station mark on the track */
+  .start__step::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: calc(-1 * var(--space-5) - 7px);
+    width: 12px;
+    height: 12px;
+    background: var(--amber);
+  }
+
+  .start__num {
+    display: block;
+    font: 900 clamp(4rem, 3rem + 4vw, 6.5rem) / 0.85 var(--font-display);
+    color: transparent;
+    -webkit-text-stroke: 2px var(--chalk);
+  }
+
+  .start__title {
+    margin: var(--space-2) 0 var(--space-1);
+    font-size: var(--fs-h3);
+  }
+
+  .start__text {
+    margin: 0;
+    max-width: 34ch;
+    color: var(--muted);
+  }
+
+  .start__cta {
+    justify-self: start;
+  }
+
+  @media (min-width: 900px) {
+    .start__track {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      padding: var(--space-5) 0 0;
+      border-left: 0;
+      border-top: var(--line);
+    }
+
+    .start__step::before {
+      top: calc(-1 * var(--space-5) - 7px);
+      left: 0;
+    }
+
+    /* the track continues into the button */
+    .start__cta {
+      justify-self: end;
+    }
+  }
+</style>

@@ -8,10 +8,10 @@ import Hero from '../components/Hero.astro';
 import Ticker from '../components/Ticker.astro';
 import Interior from '../components/Interior.astro';
 import Sectors from '../components/Sectors.astro';
+import StartSteps from '../components/StartSteps.astro';
+import Services from '../components/Services.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
 
-const steps = ['Пробне з тренером', 'Програма під тебе', 'Перші тижні не сам'];
-const services = ['Тренажерний зал', 'Персональні тренування', 'Групові заняття'];
 const coaches = ['Андрій Коваль', 'Марта Гнатюк', 'Остап Мельник', 'Соломія Бойко'];
 const faq = [
   'Я ніколи не був у залі. Мені можна?',
@@ -39,20 +39,11 @@ const faq = [
   </Section>
 
   <Section num={5} name="Як ми допомагаємо почати" title="Не знаєш, з чого почати? Це нормально.">
-    <ol class="grid grid--3">
-      {steps.map((s) => <li class="box">{s}</li>)}
-    </ol>
+    <StartSteps />
   </Section>
 
   <Section id="services" num={6} name="Послуги" title="Послуги">
-    <div class="grid grid--3">
-      {services.map((s) => (
-        <div>
-          <Placeholder label={`[ВІДЕО: ${s}, 5–10 с]`} ratio="4 / 5" />
-          <h3 class="card-title">{s}</h3>
-        </div>
-      ))}
-    </div>
+    <Services />
   </Section>
 
   <Section id="prices" num={7} name="Ціни" title="Ціни">

@@ -1,0 +1,56 @@
+---
+// Short looping service video: muted, no preload, plays only while on screen
+// and never on its own for visitors who prefer reduced motion (poster stays).
+// Without a file yet, a placeholder of the final proportions stands in.
+import Placeholder from './Placeholder.astro';
+
+interface Props {
+  src?: string;
+  poster?: string;
+  ratio: string;
+  label: string;
+}
+const { src, poster, ratio, label } = Astro.props;
+---
+
+{src ? (
+  <video
+    class="service-video"
+    style={`aspect-ratio: ${ratio}`}
+    src={src}
+    poster={poster}
+    muted
+    loop
+    playsinline
+    preload="none"
+    aria-hidden="true"
+    data-autoplay
+  />
+) : (
+  <Placeholder label={label} ratio={ratio} />
+)}
+
+<script>
+  const videos = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (videos.length && !reduced) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      }
+    }, { threshold: 0.25 });
+    videos.forEach((v) => io.observe(v));
+  }
+</script>
+
+<style>
+  .service-video {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    background: var(--concrete);
+    filter: saturate(0.82) contrast(1.02);
+  }
+</style>
