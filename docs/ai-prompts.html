@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Промпти для фото</title>
+<style>
+  :root { --graphite:#1d2023; --concrete:#34393e; --chalk:#e7e8e6; --muted:#a3a9ae; --amber:#f2a516; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--graphite); color: var(--chalk); font: 17px/1.5 system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 80px; }
+  h1 { font-size: 1.9rem; margin: 0 0 8px; }
+  h2 { font-size: 1.35rem; margin: 48px 0 4px; padding-top: 16px; border-top: 2px dashed var(--concrete); }
+  .hint { color: var(--muted); margin: 0 0 16px; }
+  .how { background: var(--concrete); padding: 16px 20px; border-radius: 2px; }
+  .how ol { margin: 0; padding-left: 20px; }
+  .step { margin: 16px 0; padding: 16px; border: 2px solid var(--concrete); border-radius: 2px; }
+  .step.done { opacity: .45; }
+  .head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+  .title { font-weight: 700; }
+  .title small { display: block; font-weight: 400; color: var(--muted); }
+  .attach { margin: 8px 0 0; color: var(--amber); font-weight: 600; }
+  pre { margin: 12px 0 0; padding: 12px; background: #15171a; border-radius: 2px; white-space: pre-wrap; font-size: 14px; color: var(--muted); max-height: 140px; overflow: auto; }
+  .btns { display: flex; gap: 8px; }
+  button { font: inherit; font-weight: 700; padding: 10px 16px; border-radius: 2px; cursor: pointer; border: 2px solid var(--amber); }
+  .copy { background: var(--amber); color: var(--graphite); }
+  .mark { background: transparent; color: var(--chalk); border-color: var(--concrete); }
+  button:focus-visible { outline: 3px solid var(--chalk); outline-offset: 2px; }
+  .now { display: inline-block; margin-left: 8px; padding: 2px 8px; background: var(--amber); color: var(--graphite); font-size: .8rem; font-weight: 700; border-radius: 2px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Фото для сайту через ChatGPT</h1>
+  <div class="how">
+    <ol>
+      <li>Відкрий <b>новий чат</b> у ChatGPT. Усі фото робимо в <b>цьому одному чаті</b>.</li>
+      <li>Натисни <b>«Копіювати»</b> біля кроку, встав у ChatGPT (Ctrl+V) і надішли.</li>
+      <li>Дочекайся картинки, завантаж її і натисни <b>«Готово»</b>. Переходь до наступного кроку.</li>
+    </ol>
+  </div>
+  <div id="list"></div>
+</main>
+
+<script>
+const SETUP = `This is the gym our website is about. Every image I ask for in this chat must look like it was taken in this same gym, in the same style. Remember these rules and apply them to every image:
+
+GYM: A modern urban gym in a converted building. Dark ceiling with exposed beams and black acoustic panels, rows of small warm recessed spotlights, subtle LED strip light along beams. Black rubber floor with thin white painted floor markings and track lanes. Dark stone and dark concrete wall panels, large glass partitions, a green plant wall in places, deep maroon accent wall. Matte black equipment with chrome details, neatly arranged.
+
+STYLE: Photorealistic photo, 24-35mm lens, eye level, natural perspective. Low-key lighting, warm spotlights, soft shadows, slight haze. Muted colours, graphite and warm grey dominate, small warm amber highlights. Clean and tidy, calm, welcoming mood, not aggressive. No text, no logos, no brand names, no watermarks, no posters with words.
+
+PEOPLE (only when a scene has people): Ordinary fit people of different ages and body types, 20 to 50 years old, not bodybuilders or fitness models. Relaxed, friendly, natural poses, correct technique. Plain dark sportswear without logos. Hands and faces anatomically correct.
+
+Don't generate anything yet, just confirm.`;
+
+const EMPTY43 = 'Generate: horizontal 4:3 image, empty zone, no people. ';
+const SERV = 'Generate: horizontal 16:9 image with people, subject in the right half, calmer darker area on the left for text. ';
+const COACH = 'Generate: vertical 4:5 portrait with a person, waist-up, looking at the camera with a calm friendly half-smile, arms relaxed or crossed. Same background for every coach: blurred free weights zone with warm spotlights. Plain black t-shirt without logos. ';
+const GAL_H = 'Generate: horizontal 3:2 image. Keep every person fully in frame. ';
+const GAL_V = 'Generate: vertical 2:3 image. Keep every person fully in frame. ';
+
+const SECTIONS = [
+  { name: 'Старт (один раз)', now: true, steps: [
+    { t: 'Налаштувати стиль', s: 'ChatGPT запам’ятає, як виглядає наш зал. Картинку не малює, лише підтверджує.',
+      attach: 'Перед відправкою прикріпи (скріпка в ChatGPT) фото залу: C:\Work-projects\gym_site\assets\originals\interior\pexels-eyecon-design-17211446.jpg', p: SETUP },
+  ]},
+  { name: 'Мапа секторів', now: true, folder: 'assets/originals/sectors/', steps: [
+    { t: 'A · Вільні ваги', p: EMPTY43 + 'The free weights zone: long dumbbell rack along a dark stone wall, a flat bench and two power racks with loaded barbells, rubber lifting platform with white floor markings.' },
+    { t: 'B · Тренажери', p: EMPTY43 + 'The machines zone: a neat row of matte black selectorised strength machines (chest press, leg press, lat pulldown) under warm spotlights, clear walkway between them.' },
+    { t: 'C · Кардіо', p: EMPTY43 + 'The cardio zone: a row of treadmills, bikes and rowing machines facing a large glass wall, evening city lights outside, screens switched off.' },
+    { t: 'D · Функціонал', p: EMPTY43 + 'The functional zone: open floor with kettlebells in a row, battle ropes, wooden plyo boxes, suspension straps hanging from a rig, white lane markings on the floor.' },
+    { t: 'E · Студія', p: EMPTY43 + 'The group studio behind a glass partition: exercise mats laid out in neat rows, foam rollers and small dumbbells, softer warm light, mirror wall.' },
+    { t: 'F · Протеїн-бар', p: EMPTY43 + 'A small bar counter near the exit of the gym floor: dark stone counter, shaker bottles, a blender, fruit in a bowl, two bar stools, warm pendant lamps.' },
+    { t: 'G · Балкон', p: EMPTY43 + 'A mezzanine balcony above the gym floor with a black metal railing, lounge chairs and a small DJ table with turntables, view down onto the gym below.' },
+  ]},
+  { name: 'Послуги', folder: 'assets/originals/services/', steps: [
+    { t: 'Тренажерний зал', p: SERV + 'A woman in her 30s doing dumbbell rows on a bench in the free weights zone, calm and focused, another person training in the soft-focus background.' },
+    { t: 'Персональні тренування', p: SERV + 'A coach standing next to a beginner man in his 40s at a cable machine, the coach gently correcting his elbow position, both smiling slightly.' },
+    { t: 'Групові заняття', p: SERV + 'A small group of 5 people of different ages doing a squat exercise on mats in the glass-walled studio, instructor in front facing them.' },
+  ]},
+  { name: 'Тренери', hint: 'Роби всі чотири підряд, щоб фон і світло були однакові.', folder: 'assets/originals/coaches/', steps: [
+    { t: 'Андрій Коваль · силові', p: COACH + 'Man around 35, athletic but not bulky, short dark hair, short beard.' },
+    { t: 'Марта Гнатюк · функціонал', p: COACH + 'Woman around 30, energetic, hair in a ponytail.' },
+    { t: 'Остап Мельник · новачки', p: COACH + 'Man around 28, lean, approachable, short light-brown hair, clean-shaven.' },
+    { t: 'Соломія Бойко · розтяжка', p: COACH + 'Woman around 38, slim and graceful, dark hair in a low bun.' },
+  ]},
+  { name: 'Івенти', folder: 'assets/originals/events/', steps: [
+    { t: 'Великий блок', p: 'Generate: horizontal 21:9 image with people. Evening event in the gym: a DJ playing on the mezzanine balcony above the gym floor, below people are training and chatting in small groups, warm amber and a few deep red lights, light haze in the air. Friendly, open atmosphere, not a nightclub. DJ in the upper centre, darker lower-left corner.' },
+    { t: 'Картка 1', p: 'Generate: horizontal 3:2 image with people. Close shot from the same evening event: two friends high-fiving after a set.' },
+    { t: 'Картка 2', p: 'Generate: horizontal 3:2 image. Close shot from the same evening event: DJ hands on the turntables, low angle.' },
+    { t: 'Картка 3', p: 'Generate: horizontal 3:2 image with people. Close shot from the same evening event: people laughing near the protein bar.' },
+  ]},
+  { name: 'Протеїн-бар', folder: 'assets/originals/bar/', steps: [
+    { t: 'Фото бару', p: 'Generate: vertical 4:5 image, no people. Close-up of the protein bar counter: two protein shakes in clear cups (chocolate and strawberry), a banana, a shaker bottle, dark stone counter top, warm pendant lamp above, gym floor softly blurred behind.' },
+  ]},
+  { name: 'Галерея', folder: 'assets/originals/gallery/', steps: [
+    { t: 'Руки на штанзі', p: GAL_H + 'Chalked hands gripping a barbell, close-up.' },
+    { t: 'Гирі в ряд', p: GAL_V + 'Row of kettlebells in order of weight on the rubber floor.' },
+    { t: 'Розтяжка', p: GAL_H + 'A woman stretching on a mat in the studio, full body in frame.' },
+    { t: 'Страхування на жимі', p: GAL_V + 'Two people spotting each other on the bench press, full bodies in frame.' },
+    { t: 'Ранковий зал', p: GAL_H + 'Empty gym early in the morning, first light through the glass wall.' },
+    { t: 'Розмітка на підлозі', p: GAL_V + 'Close-up of the white floor markings and lane numbers on the rubber floor.' },
+    { t: 'Гребний тренажер', p: GAL_H + 'A man on the rowing machine mid-stroke, side view, full body in frame.' },
+    { t: 'Тренер з групою', p: GAL_V + 'Coach explaining an exercise to a small group, all people fully in frame.' },
+    { t: 'Після тренування', p: GAL_H + 'Towels and water bottles on a bench after a workout.' },
+  ]},
+];
+
+const KEY = 'sf-prompts-done';
+let done = {};
+try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch {} };
+
+const list = document.getElementById('list');
+let n = 0;
+for (const sec of SECTIONS) {
+  const h = document.createElement('h2');
+  h.innerHTML = sec.name + (sec.now ? '<span class="now">зараз</span>' : '');
+  list.append(h);
+  const hint = [sec.hint, sec.folder && 'Готові фото клади в C:\Work-projects\gym_site\' + sec.folder, !sec.now && 'Поки не треба, дійдемо до цієї секції пізніше.'].filter(Boolean).join(' ');
+  if (hint) { const p = document.createElement('p'); p.className = 'hint'; p.textContent = hint; list.append(p); }
+  for (const st of sec.steps) {
+    n++;
+    const id = sec.name + '/' + st.t;
+    const el = document.createElement('div');
+    el.className = 'step' + (done[id] ? ' done' : '');
+    el.innerHTML = `<div class="head"><div class="title">Крок ${n}. ${st.t}${st.s ? `<small>${st.s}</small>` : ''}</div>
+      <div class="btns"><button class="copy" type="button">Копіювати</button><button class="mark" type="button">${done[id] ? 'Повернути' : 'Готово'}</button></div></div>
+      ${st.attach ? `<p class="attach">📎 ${st.attach}</p>` : ''}<pre></pre>`;
+    el.querySelector('pre').textContent = st.p;
+    const copy = el.querySelector('.copy');
+    copy.onclick = async () => {
+      try { await navigator.clipboard.writeText(st.p); copy.textContent = 'Скопійовано ✓'; }
+      catch { const r = document.createRange(); r.selectNodeContents(el.querySelector('pre')); getSelection().removeAllRanges(); getSelection().addRange(r); copy.textContent = 'Натисни Ctrl+C'; }
+      setTimeout(() => (copy.textContent = 'Копіювати'), 2000);
+    };
+    el.querySelector('.mark').onclick = (e) => {
+      done[id] = !done[id]; save();
+      el.classList.toggle('done', done[id]);
+      e.target.textContent = done[id] ? 'Повернути' : 'Готово';
+    };
+    list.append(el);
+  }
+}
+</script>
+</body>
+</html>
