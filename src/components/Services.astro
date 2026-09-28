@@ -1,0 +1,124 @@
+---
+// Three services with a short video each. Personal training is the lead block:
+// it's the base path for beginners, the site's main audience.
+// Clips live in public/video/ (cropped, muted, ~0.5 MB each; sources in docs/media-credits.md).
+import ServiceVideo from './ServiceVideo.astro';
+
+const services = [
+  {
+    key: 'personal',
+    tag: 'Для старту',
+    title: 'Персональні тренування',
+    text: 'Тренер будує програму під твою мету й стежить за технікою на кожному занятті. Найкоротший шлях до результату — і найспокійніший старт для новачка.',
+    link: { href: '#booking', label: 'Записатися на пробне' },
+    ratio: '4 / 5',
+    video: '/video/personal-training.mp4',
+    poster: '/video/personal-training.jpg',
+  },
+  {
+    key: 'gym',
+    title: 'Тренажерний зал',
+    text: 'Вільні ваги, тренажери й кардіо — тренуйся у своєму темпі. Потрібна порада — тренер у залі поруч.',
+    link: { href: '#prices', label: 'Ціни на абонементи' },
+    ratio: '3 / 2',
+    video: '/video/gym-floor.mp4',
+    poster: '/video/gym-floor.jpg',
+  },
+  {
+    key: 'group',
+    title: 'Групові заняття',
+    text: 'Функціональні тренування, розтяжка та інші формати в студії. Компанія тримає в тонусі краще за будильник.',
+    link: { href: '/schedule', label: 'Розклад занять' },
+    ratio: '3 / 2',
+    video: '/video/group-classes.mp4',
+    poster: '/video/group-classes.jpg',
+  },
+] as const;
+---
+
+<ul class="services">
+  {services.map((s, i) => (
+    <li class:list={['service', { 'service--lead': i === 0 }]}>
+      <div class="service__media">
+        <ServiceVideo
+          src={s.video}
+          poster={s.poster}
+          ratio={s.ratio} label={`[ВІДЕО: ${s.title}, 5–10 с, без звуку]`} />
+        {'tag' in s && <span class="service__tag">{s.tag}</span>}
+      </div>
+      <div class="service__body">
+        <h3 class="service__title">{s.title}</h3>
+        <p class="service__text">{s.text}</p>
+        <a class="service__link" href={s.link.href}>{s.link.label} →</a>
+      </div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .services {
+    display: grid;
+    gap: var(--space-6);
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .service {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+
+  .service__media {
+    position: relative;
+  }
+
+  .service__tag {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    padding: 6px 12px;
+    background: var(--amber);
+    color: var(--graphite);
+    font: 700 1.25rem / 1.1 var(--font-display);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .service__title {
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-h3);
+  }
+
+  .service--lead .service__title {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+
+  .service__text {
+    margin: 0 0 var(--space-2);
+    max-width: 44ch;
+    color: var(--muted);
+  }
+
+  .service__link {
+    display: inline-block;
+    padding-bottom: 2px;
+    border-bottom: 2px solid currentColor;
+    color: var(--amber);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* desktop: lead block on the left, two smaller services stacked on the right */
+  @media (min-width: 900px) {
+    .services {
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--space-6) var(--space-7);
+    }
+
+    .service--lead {
+      grid-row: span 2;
+    }
+  }
+</style>
