@@ -7,6 +7,7 @@ import Placeholder from '../components/Placeholder.astro';
 import Hero from '../components/Hero.astro';
 import Ticker from '../components/Ticker.astro';
 import Interior from '../components/Interior.astro';
+import interiorPhoto from '../assets/interior-gym.jpg';
 
 const sectors = [
   'A · Вільні ваги',
@@ -38,7 +39,7 @@ const faq = [
   <Ticker />
 
   <!-- 03 · Wide gym interior, entry to the sectors map -->
-  <Interior />
+  <Interior photo={interiorPhoto} alt="Порожній зал SECTOR FITNESS: тренажери, вільні ваги й розмітка на підлозі" />
 
   <Section id="sectors" num={4} name="Мапа секторів" title="SECTOR — це про зали всередині залу.">
     <p>Натисни на сектор, щоб зазирнути всередину.</p>
