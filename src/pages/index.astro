@@ -7,17 +7,9 @@ import Placeholder from '../components/Placeholder.astro';
 import Hero from '../components/Hero.astro';
 import Ticker from '../components/Ticker.astro';
 import Interior from '../components/Interior.astro';
+import Sectors from '../components/Sectors.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
 
-const sectors = [
-  'A · Вільні ваги',
-  'B · Тренажери',
-  'C · Кардіо',
-  'D · Функціонал',
-  'E · Студія',
-  'F · Протеїн-бар',
-  'G · Балкон',
-];
 const steps = ['Пробне з тренером', 'Програма під тебе', 'Перші тижні не сам'];
 const services = ['Тренажерний зал', 'Персональні тренування', 'Групові заняття'];
 const coaches = ['Андрій Коваль', 'Марта Гнатюк', 'Остап Мельник', 'Соломія Бойко'];
@@ -43,20 +35,7 @@ const faq = [
 
   <Section id="sectors" num={4} name="Мапа секторів" title="SECTOR — це про зали всередині залу.">
     <p>Натисни на сектор, щоб зазирнути всередину.</p>
-    <div class="split">
-      <div class="sectors__map">
-        <Placeholder label="[МАПА: ізометрична SVG-схема залу з секторами A–G, натискання вибирає сектор]" ratio="4 / 3" />
-      </div>
-      <!-- Mobile: the map is too small to tap, sectors are picked from a row of letters instead -->
-      <ul class="sectors__tabs" aria-label="Сектори (на мобільному замість мапи)">
-        {sectors.map((s, i) => <li class:list={{ 'is-active': i === 0 }}>{s.charAt(0)}</li>)}
-      </ul>
-      <div class="sectors__panel">
-        <Placeholder label="[ФОТО: вибраний сектор, одразу — A]" ratio="3 / 2" />
-        <p class="plate">{sectors[0]}</p>
-        <p class="note">[ТЕКСТ: опис сектора, 2–3 речення]. Фото й опис змінюються, коли вибираєш інший сектор.</p>
-      </div>
-    </div>
+    <Sectors />
   </Section>
 
   <Section num={5} name="Як ми допомагаємо почати" title="Не знаєш, з чого почати? Це нормально.">
@@ -197,59 +176,6 @@ const faq = [
     padding: 14px 16px;
     border: 2px dashed var(--concrete);
     font-weight: 600;
-  }
-
-  .sectors__map {
-    display: none;
-  }
-
-  .sectors__tabs {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .sectors__tabs li {
-    display: grid;
-    place-items: center;
-    min-height: 44px;
-    border: 2px dashed var(--concrete);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.5rem;
-  }
-
-  .sectors__tabs .is-active {
-    border: 2px solid var(--amber);
-    color: var(--amber);
-  }
-
-  .sectors__panel {
-    display: grid;
-    gap: 12px;
-    align-content: start;
-  }
-
-  .plate {
-    justify-self: start;
-    margin: 0;
-    padding: 6px 12px;
-    background: var(--amber);
-    color: var(--graphite);
-    font-weight: 600;
-  }
-
-  @media (min-width: 768px) {
-    .sectors__map {
-      display: block;
-    }
-
-    .sectors__tabs {
-      display: none;
-    }
   }
 
   .after-media {
