@@ -1,0 +1,412 @@
+---
+// Sectors A–G: a flat floor plan of the gym (desktop) or a row of letters (mobile)
+// picks which sector card is shown. Content and plan coordinates live in
+// src/data/sectors.json; `plan` is [x, y, width, height] on a 1000 × 640 floor.
+// Balcony G (`upper`) is the second floor, drawn on top of machines B.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import data from '../data/sectors.json';
+
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/sectors/*.jpg', { eager: true });
+const photo = (file: string) => photos[`../assets/sectors/${file}`].default;
+
+type Sector = (typeof data.sectors)[number] & { upper?: boolean; link?: { href: string; label: string } };
+const sectors = data.sectors as Sector[];
+
+// Letter size follows the zone height so short zones (F, G) don't overflow.
+// B's label sits below the balcony that covers its top part.
+const BALCONY_BOTTOM = 170;
+const labels = sectors.map((s) => {
+  const [x, y, , h] = s.plan;
+  const size = h < 200 ? 100 : 150;
+  const top = s.key === 'B' ? BALCONY_BOTTOM : y;
+  const baseline = top + 20 + size * 0.85;
+  return { x: x + 26, y: baseline, size };
+});
+// lower floor first so the balcony is painted on top
+const drawOrder = sectors.map((s, i) => i).sort((a, b) => Number(!!sectors[a].upper) - Number(!!sectors[b].upper));
+const PAD = 6;
+---
+
+<div class="sectors" data-sectors>
+  <div class="sectors__map">
+    <svg viewBox="-20 -44 1040 750" role="group" aria-label="Схема залу: вибери сектор">
+      <rect class="wall" x="-6" y="-6" width="1012" height="652" />
+      <text class="mark" x="0" y="-16">Вікна · вул. Атлетична</text>
+      <polygon class="entry" points="520,660 540,690 560,660" />
+      <text class="mark" x="575" y="686">Вхід</text>
+      {drawOrder.map((i) => {
+        const s = sectors[i];
+        const [x, y, w, h] = s.plan;
+        const l = labels[i];
+        return (
+          <g
+            class:list={['zone', { 'zone--upper': s.upper }]}
+            role="button"
+            tabindex="0"
+            data-key={s.key}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            aria-label={`${s.key} · ${s.name}${s.upper ? ', другий поверх' : ''}`}
+          >
+            <rect class="zone__floor" x={x + PAD} y={y + PAD} width={w - PAD * 2} height={h - PAD * 2} />
+            <text class="zone__letter" x={l.x} y={l.y} style={`font-size: ${l.size}px`}>{s.key}</text>
+            <text class="zone__name" x={l.x + 4} y={l.y + 36}>{s.upper ? `${s.name} · 2 поверх` : s.name}</text>
+          </g>
+        );
+      })}
+    </svg>
+  </div>
+
+  <!-- Mobile: the plan is too small to tap, sectors are picked from a row of letters -->
+  <div class="sectors__tabs" role="tablist" aria-label="Сектори залу">
+    {sectors.map((s, i) => (
+      <button
+        type="button"
+        class="sectors__tab"
+        role="tab"
+        id={`sector-tab-${s.key}`}
+        data-key={s.key}
+        aria-controls={`sector-${s.key}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+        aria-label={`${s.key} · ${s.name}`}
+      >
+        {s.key}
+      </button>
+    ))}
+  </div>
+
+  <div class="sectors__cards">
+    {sectors.map((s, i) => (
+      <article class="sector" id={`sector-${s.key}`} data-key={s.key} role="tabpanel" aria-label={`${s.key} · ${s.name}`} hidden={i !== 0}>
+        <div class="sector__photo">
+          <Picture
+            src={photo(s.photo)}
+            alt={s.alt}
+            formats={['avif', 'webp']}
+            widths={[480, 720, 960, 1440]}
+            sizes="(min-width: 900px) 40vw, 100vw"
+          />
+          <span class="sector__letter" aria-hidden="true">{s.key}</span>
+        </div>
+        <h3 class="sector__plate">{s.key} · {s.name}</h3>
+        <p class="sector__text">{s.text}</p>
+        {s.link && <a class="sector__more" href={s.link.href}>{s.link.label} →</a>}
+      </article>
+    ))}
+
+    <div class="sectors__steps">
+      <button type="button" class="sectors__step" data-step="-1" aria-label="Попередній сектор">←</button>
+      <button type="button" class="sectors__step" data-step="1" aria-label="Наступний сектор">→</button>
+      <span class="sectors__count" data-count>1 / {sectors.length}</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-sectors]');
+  if (root) {
+    const cards = [...root.querySelectorAll<HTMLElement>('.sector')];
+    const zones = [...root.querySelectorAll<SVGGElement>('.zone')];
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('.sectors__tab')];
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const keys = cards.map((c) => c.dataset.key);
+    let current = 0;
+
+    const select = (index: number, focusTab = false) => {
+      current = (index + keys.length) % keys.length;
+      const key = keys[current];
+      cards.forEach((c) => (c.hidden = c.dataset.key !== key));
+      zones.forEach((z) => z.setAttribute('aria-pressed', String(z.dataset.key === key)));
+      tabs.forEach((t) => {
+        const on = t.dataset.key === key;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focusTab) t.focus();
+      });
+      count.textContent = `${current + 1} / ${keys.length}`;
+    };
+    const byKey = (el: Element | null) => {
+      const key = (el as HTMLElement | null)?.dataset.key;
+      if (key) select(keys.indexOf(key));
+    };
+
+    zones.forEach((z) => {
+      z.addEventListener('click', () => byKey(z));
+      z.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          byKey(z);
+        }
+      });
+    });
+    tabs.forEach((t) => {
+      t.addEventListener('click', () => byKey(t));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') select(current + 1, true);
+        if (e.key === 'ArrowLeft') select(current - 1, true);
+      });
+    });
+    root.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => select(current + Number(b.dataset.step))),
+    );
+  }
+</script>
+
+<style>
+  .sectors {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+
+  @media (min-width: 900px) {
+    .sectors {
+      grid-template-columns: 1.35fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+  }
+
+  /* ---------- plan ---------- */
+  .sectors__map {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .sectors__map {
+      display: block;
+    }
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .wall {
+    fill: none;
+    stroke: var(--concrete);
+    stroke-width: 6;
+  }
+
+  .mark {
+    font: 600 20px var(--font-body);
+    fill: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .entry {
+    fill: var(--amber);
+  }
+
+  .zone {
+    cursor: pointer;
+    outline: none;
+  }
+
+  .zone__floor {
+    fill: #24282c;
+    stroke: var(--muted);
+    stroke-width: 2;
+    stroke-dasharray: 10 7;
+    transition: fill 0.15s, stroke 0.15s;
+  }
+
+  .zone--upper .zone__floor {
+    fill: rgb(29 32 35 / 0.82);
+  }
+
+  .zone__letter {
+    font-family: var(--font-display);
+    font-weight: 900;
+    fill: transparent;
+    stroke: var(--chalk);
+    stroke-width: 2;
+    pointer-events: none;
+    transition: fill 0.15s, stroke 0.15s;
+  }
+
+  .zone__name {
+    font: 600 24px var(--font-body);
+    fill: var(--muted);
+    letter-spacing: 0.02em;
+    pointer-events: none;
+  }
+
+  .zone:hover .zone__floor {
+    fill: #2b3035;
+    stroke: var(--chalk);
+  }
+
+  .zone:focus-visible .zone__floor {
+    stroke: var(--chalk);
+    stroke-width: 5;
+    stroke-dasharray: none;
+  }
+
+  .zone[aria-pressed='true'] .zone__floor {
+    fill: rgb(242 165 22 / 0.16);
+    stroke: var(--amber);
+    stroke-width: 3;
+    stroke-dasharray: none;
+  }
+
+  .zone[aria-pressed='true']:focus-visible .zone__floor {
+    stroke: var(--chalk);
+    stroke-width: 5;
+  }
+
+  .zone[aria-pressed='true'] .zone__letter {
+    fill: var(--amber);
+    stroke: var(--amber);
+  }
+
+  .zone[aria-pressed='true'] .zone__name {
+    fill: var(--chalk);
+  }
+
+  /* ---------- mobile letters ---------- */
+  .sectors__tabs {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  @media (min-width: 900px) {
+    .sectors__tabs {
+      display: none;
+    }
+  }
+
+  .sectors__tab {
+    min-height: 48px;
+    padding: 0;
+    border: 2px dashed var(--concrete);
+    border-radius: var(--radius);
+    background: none;
+    color: var(--chalk);
+    font: 700 1.625rem var(--font-display);
+    cursor: pointer;
+  }
+
+  .sectors__tab[aria-selected='true'] {
+    border: 2px solid var(--amber);
+    background: var(--amber);
+    color: var(--graphite);
+  }
+
+  /* ---------- card ---------- */
+  .sectors__cards {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .sector {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .sector[hidden] {
+    display: none;
+  }
+
+  .sector__photo {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--concrete);
+    isolation: isolate;
+  }
+
+  .sector__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* AI photos look «plastic»: muted colour + film grain and vignette below */
+    filter: saturate(0.7) contrast(1.08) brightness(0.95);
+  }
+
+  .sector__photo::before,
+  .sector__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .sector__photo::before {
+    background: var(--amber);
+    mix-blend-mode: soft-light;
+    opacity: 0.14;
+  }
+
+  .sector__photo::after {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.45) 100%);
+    mix-blend-mode: overlay;
+  }
+
+  .sector__letter {
+    position: absolute;
+    right: 12px;
+    bottom: -14px;
+    z-index: 1;
+    font: 900 clamp(6rem, 14vw, 9rem) / 1 var(--font-display);
+    color: transparent;
+    -webkit-text-stroke: 2px var(--chalk);
+    opacity: 0.85;
+  }
+
+  .sector__plate {
+    justify-self: start;
+    margin: 0;
+    padding: 6px 12px;
+    background: var(--amber);
+    color: var(--graphite);
+    font: 700 1.5rem / 1.1 var(--font-display);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .sector__text {
+    margin: 0;
+    max-width: 42ch;
+  }
+
+  .sector__more {
+    justify-self: start;
+    padding-bottom: 2px;
+    border-bottom: 2px solid currentColor;
+    color: var(--amber);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .sectors__steps {
+    display: flex;
+    gap: var(--space-1);
+    align-items: center;
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+
+  .sectors__step {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--concrete);
+    border-radius: var(--radius);
+    background: none;
+    color: var(--chalk);
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+
+  .sectors__step:hover {
+    border-color: var(--chalk);
+  }
+</style>
