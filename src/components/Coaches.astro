@@ -1,0 +1,93 @@
+---
+// Four coaches. Each wears a sector plate («A · Вільні ваги») — ties the team to
+// the gym map. Phones: horizontal swipe row instead of a long stack.
+// Content: src/data/coaches.json (people are fictional, see footer note).
+import Placeholder from './Placeholder.astro';
+import coaches from '../data/coaches.json';
+import sectorsData from '../data/sectors.json';
+
+const sectorName = Object.fromEntries(sectorsData.sectors.map((s) => [s.key, s.name]));
+---
+
+<ul class="coaches">
+  {coaches.map((c) => (
+    <li class="coach">
+      <div class="coach__media">
+        <Placeholder label="[ФОТО: тренер, пояс або повний зріст]" ratio="3 / 4" />
+        <a class="coach__plate" href="#sectors">
+          <span class="coach__letter">{c.sector}</span> · {sectorName[c.sector]}
+        </a>
+      </div>
+      <h3 class="coach__name">{c.name}</h3>
+      <p class="coach__role">{c.role}</p>
+      <p class="coach__text">{c.text}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .coaches {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(78%, 300px);
+    gap: var(--space-4);
+    margin: var(--space-5) calc(-1 * var(--gutter)) 0;
+    padding: 0 var(--gutter) var(--space-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    list-style: none;
+  }
+
+  .coach {
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 900px) {
+    .coaches {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(4, 1fr);
+      margin-inline: 0;
+      padding: 0;
+      overflow: visible;
+    }
+  }
+
+  .coach__media {
+    position: relative;
+  }
+
+  .coach__plate {
+    position: absolute;
+    left: var(--space-2);
+    bottom: var(--space-2);
+    padding: 4px 10px;
+    background: var(--graphite);
+    border: 2px solid var(--amber);
+    color: var(--chalk);
+    font: 700 1.125rem / 1.1 var(--font-display);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .coach__letter {
+    color: var(--amber);
+  }
+
+  .coach__name {
+    margin: var(--space-3) 0 4px;
+    font-size: var(--fs-h3);
+  }
+
+  .coach__role {
+    margin: 0 0 var(--space-1);
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .coach__text {
+    margin: 0;
+    color: var(--muted);
+  }
+</style>
