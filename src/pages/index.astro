@@ -12,6 +12,8 @@ import StartSteps from '../components/StartSteps.astro';
 import Services from '../components/Services.astro';
 import Prices from '../components/Prices.astro';
 import Coaches from '../components/Coaches.astro';
+import Events from '../components/Events.astro';
+import Bar from '../components/Bar.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
 
 const faq = [
@@ -55,21 +57,12 @@ const faq = [
     <Coaches />
   </Section>
 
-  <Section id="events" num={9} name="Івенти" title="Вечори, коли зал звучить інакше." full>
-    <Placeholder label="[ФОТО: діджей на балконі над залом, атмосферне, на всю ширину]" ratio="21 / 9" />
-    <div class="container grid grid--3 after-media">
-      <div class="box">[ІВЕНТ 1: назва, дата]</div>
-      <div class="box">[ІВЕНТ 2: назва, дата]</div>
-      <div class="box">[ІВЕНТ 3: назва, дата]</div>
-    </div>
-    <div class="container"><a href="/news">Усі новини та івенти →</a></div>
+  <Section id="events" num={9} name="Події" title="Приходь не сам.">
+    <Events />
   </Section>
 
   <Section id="bar" num={10} name="Протеїн-бар" title="Відновлення — одразу після тренування.">
-    <div class="split">
-      <Placeholder label="[ФОТО: барна стійка з шейками]" ratio="4 / 3" />
-      <Placeholder label="[МЕНЮ: 6 позицій із цінами]" ratio="4 / 3" />
-    </div>
+    <Bar />
   </Section>
 
   <Section num={11} name="Галерея" title="Галерея" full>
@@ -108,30 +101,10 @@ const faq = [
     gap: 24px;
   }
 
-  .grid {
-    display: grid;
-    gap: 24px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
   @media (min-width: 768px) {
     .split {
       grid-template-columns: 1fr 1fr;
     }
-
-    .grid--3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .box {
-    padding: 24px;
-    min-height: 120px;
-    background: var(--concrete);
-    border-radius: var(--radius);
-    font-weight: 600;
   }
 
   .list {
@@ -146,10 +119,6 @@ const faq = [
     padding: 14px 16px;
     border: 2px dashed var(--concrete);
     font-weight: 600;
-  }
-
-  .after-media {
-    margin-block: 24px;
   }
 
   .gallery {
