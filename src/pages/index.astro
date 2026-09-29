@@ -14,6 +14,7 @@ import Prices from '../components/Prices.astro';
 import Coaches from '../components/Coaches.astro';
 import Events from '../components/Events.astro';
 import Bar from '../components/Bar.astro';
+import Gallery from '../components/Gallery.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
 
 const faq = [
@@ -65,17 +66,8 @@ const faq = [
     <Bar />
   </Section>
 
-  <Section num={11} name="Галерея" title="Галерея" full>
-    <div class="gallery" tabindex="0" role="region" aria-label="Галерея фото, прокручується вбік">
-      {[1, 2, 3].map((row) => (
-        <div class="gallery__row">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <Placeholder label={`[ФОТО ${row}.${n}]`} ratio={n % 2 ? '3 / 2' : '4 / 5'} />
-          ))}
-        </div>
-      ))}
-    </div>
-    <p class="container note">Горизонтальне прокручування коліщатком миші, фото відкривається без обрізання.</p>
+  <Section id="gallery" num={11} name="Галерея" title="Зазирни до залу." full>
+    <Gallery />
   </Section>
 
   <Section num={12} name="FAQ" title="Часті питання">
@@ -119,27 +111,5 @@ const faq = [
     padding: 14px 16px;
     border: 2px dashed var(--concrete);
     font-weight: 600;
-  }
-
-  .gallery {
-    display: grid;
-    gap: 12px;
-    overflow-x: auto;
-    padding-inline: var(--gutter);
-  }
-
-  .gallery__row {
-    display: flex;
-    gap: 12px;
-  }
-
-  .gallery__row :global(.placeholder) {
-    flex: none;
-    height: 200px;
-  }
-
-  .note {
-    color: var(--muted);
-    font-size: 0.9375rem;
   }
 </style>
