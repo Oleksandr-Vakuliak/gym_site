@@ -11,7 +11,7 @@ Core idea: the gym as a map of marked sectors (A–G). A beginner can see the wh
 
 - [Astro](https://astro.build) — static site, minimal client-side JS
 - Plain CSS with design tokens (no UI framework)
-- Hosting: Vercel (planned)
+- Hosting: Vercel — https://sector-fitness.vercel.app (deployed from the CLI with `npx vercel deploy --prod`; GitHub auto-deploys not connected yet)
 
 Why Astro: the site is mostly content (sections, schedule, news), so static HTML is fast and cheap to host. News can live as Markdown files, and a simple admin for the owner can be added later without changing the stack.
 
@@ -77,4 +77,4 @@ Sofia Sans and Sofia Sans Extra Condensed (Google Fonts, OFL) are downloaded at 
 - Content is fictional (see footer note on the site).
 - English version will be added after the Ukrainian version is complete.
 - Media are placeholders until real files are provided; the gallery and the protein bar temporarily reuse sector photos.
-- Sitemap, canonical URLs and the social preview image need the final domain and are added with the deploy task.
+- The site URL lives in `astro.config.mjs` (`site`) and `public/robots.txt`; update both if a custom domain is connected.

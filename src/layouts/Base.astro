@@ -1,7 +1,8 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { Font } from 'astro:assets';
+import { Font, getImage } from 'astro:assets';
+import heroPhoto from '../assets/hero-cable-crossover.jpg';
 import '../styles/global.css';
 
 interface Props {
@@ -13,6 +14,10 @@ const {
   overlayHeader = false,
   description = 'SECTOR FITNESS — зал у Львові, де новачкові не страшно почати. Перше тренування з тренером безкоштовно.',
 } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+// social preview: the hero photo cropped to the 1.91:1 card size
+const ogImage = await getImage({ src: heroPhoto, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
 ---
 
 <!doctype html>
@@ -22,12 +27,18 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <!-- sitemap, canonical and og:image need the final domain — added with the deploy task -->
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="uk_UA" />
     <meta property="og:site_name" content="SECTOR FITNESS" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage.src, Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#1d2023" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- preload only what the first screen needs: hero headline + body text, Cyrillic -->
