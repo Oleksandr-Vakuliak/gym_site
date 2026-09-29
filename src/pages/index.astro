@@ -15,16 +15,8 @@ import Coaches from '../components/Coaches.astro';
 import Events from '../components/Events.astro';
 import Bar from '../components/Bar.astro';
 import Gallery from '../components/Gallery.astro';
+import Faq from '../components/Faq.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
-
-const faq = [
-  'Я ніколи не був у залі. Мені можна?',
-  'Що взяти на перше тренування?',
-  'Чи є роздягальні й душ?',
-  'Можна заморозити абонемент?',
-  'З якого віку можна тренуватися?',
-  'Чи є парковка?',
-];
 ---
 
 <Base title="SECTOR FITNESS — зал у Львові, пробне тренування безкоштовно" overlayHeader>
@@ -70,10 +62,8 @@ const faq = [
     <Gallery />
   </Section>
 
-  <Section num={12} name="FAQ" title="Часті питання">
-    <ul class="list">
-      {faq.map((q) => <li>{q}</li>)}
-    </ul>
+  <Section id="faq" num={12} name="FAQ" title="Питання, які соромно поставити.">
+    <Faq />
   </Section>
 
   <Section id="contacts" num={13} name="Запис на пробне + контакти" title="Запишись на пробне тренування">
@@ -97,19 +87,5 @@ const faq = [
     .split {
       grid-template-columns: 1fr 1fr;
     }
-  }
-
-  .list {
-    display: grid;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .list li {
-    padding: 14px 16px;
-    border: 2px dashed var(--concrete);
-    font-weight: 600;
   }
 </style>
