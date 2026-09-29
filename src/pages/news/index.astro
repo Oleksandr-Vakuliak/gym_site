@@ -1,32 +1,60 @@
 ---
+// News & events list: newest first, from the Markdown collection (src/content/news).
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import Placeholder from '../../components/Placeholder.astro';
+import { formatDate, kindLabel } from '../../utils/news';
+
+const posts = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Base title="Новини та івенти — SECTOR FITNESS">
-  <PageIntro meta="Сторінка · Новини та івенти" title="Новини та івенти" />
+<Base
+  title="Новини й події — SECTOR FITNESS"
+  description="Новини залу SECTOR FITNESS у Львові: нові групи, події для новачків, акції."
+>
+  <PageIntro meta="Новини й події" title="Що нового в залі" />
+
   <div class="container page-body">
-    <ul class="news">
-      {[1, 2, 3, 4].map((n) => (
-        <li>
-          <Placeholder label={`[ФОТО: новина ${n}]`} ratio="3 / 2" />
-          <p class="news__date">[ДАТА]</p>
-          <h2><a href="/news/example">[НОВИНА {n}: заголовок]</a></h2>
-        </li>
-      ))}
-    </ul>
+    {posts.length ? (
+      <ul class="news">
+        {posts.map((p, i) => (
+          <li class:list={['post', { 'post--lead': i === 0 }]}>
+            <div class="post__media">
+              {p.data.cover ? (
+                <Image src={p.data.cover} alt="" widths={[480, 800]} sizes="(min-width: 900px) 50vw, 100vw" />
+              ) : (
+                <Placeholder label="[ФОТО: обкладинка новини]" ratio="3 / 2" />
+              )}
+            </div>
+            <div class="post__body">
+              <p class="post__meta">
+                <span class:list={['post__kind', `post__kind--${p.data.kind}`]}>{kindLabel[p.data.kind]}</span>
+                <time datetime={p.data.date.toISOString().slice(0, 10)}>{formatDate(p.data.date)}</time>
+              </p>
+              <h2 class="post__title">
+                <a href={`/news/${p.id}`}>{p.data.title}</a>
+              </h2>
+              <p class="post__excerpt">{p.data.excerpt}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty">Новин поки немає. Зазирни пізніше — або просто приходь на пробне.</p>
+    )}
   </div>
 </Base>
 
 <style>
   .page-body {
-    padding-bottom: 96px;
+    padding-bottom: var(--space-8);
   }
 
   .news {
     display: grid;
-    gap: 32px;
+    gap: var(--space-6);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -35,23 +63,90 @@ import Placeholder from '../../components/Placeholder.astro';
   @media (min-width: 768px) {
     .news {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6) var(--space-5);
+    }
+
+    /* the newest post runs across the full width */
+    .post--lead {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: var(--space-5);
+      align-items: center;
+    }
+
+    .post--lead .post__title {
+      font-size: var(--fs-h2);
     }
   }
 
-  .news__date {
-    margin: 12px 0 4px;
+  /* whole card is clickable through the title link */
+  .post {
+    position: relative;
+  }
+
+  .post__media :global(img) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    filter: saturate(0.82) contrast(1.02);
+  }
+
+  .post__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: var(--space-3) 0 var(--space-1);
     color: var(--muted);
+    font-size: var(--fs-small);
   }
 
-  h2 {
-    font-size: 2rem;
+  .post--lead .post__meta {
+    margin-top: 0;
   }
 
-  h2 a {
+  .post__kind {
+    padding: 2px 8px;
+    border: 2px solid var(--concrete);
+    color: var(--chalk);
+    font: 700 1rem / 1.1 var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .post__kind--event {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .post__title {
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-h3);
+    text-transform: uppercase;
+  }
+
+  .post__title a {
     text-decoration: none;
   }
 
-  h2 a:hover {
+  .post__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .post:hover .post__title a {
     color: var(--amber);
+  }
+
+  .post__excerpt {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .empty {
+    padding: var(--space-4);
+    border: 2px dashed var(--concrete);
+    color: var(--muted);
   }
 </style>
