@@ -1,18 +1,106 @@
 ---
+// Privacy policy for the trial form (name, phone, preferred time).
+// The site is a concept: the text shows what a real gym would publish.
 import Base from '../layouts/Base.astro';
 import PageIntro from '../components/PageIntro.astro';
 ---
 
-<Base title="Політика конфіденційності — SECTOR FITNESS">
-  <PageIntro meta="Сторінка · Політика конфіденційності" title="Політика конфіденційності" />
+<Base
+  title="Політика конфіденційності — SECTOR FITNESS"
+  description="Які дані збирає форма запису SECTOR FITNESS, навіщо і як їх видалити."
+>
+  <PageIntro meta="Політика конфіденційності" title="Твої дані — коротко й чесно" />
+
   <div class="container page-body">
-    <p>[ТЕКСТ: які дані збирає форма запису (ім'я, телефон), навіщо, скільки зберігаються, як видалити]</p>
+    <p class="demo">
+      Це концепт-сайт для портфоліо: форма запису нічого не надсилає і дані не зберігає. Нижче — текст, який був би
+      на сайті справжнього залу.
+    </p>
+
+    <div class="prose">
+      <h2>Що ми збираємо</h2>
+      <p>Лише те, що ти сам вписуєш у форму запису на пробне тренування:</p>
+      <ul>
+        <li>ім'я — щоб знати, як до тебе звертатися;</li>
+        <li>номер телефону — щоб тренер міг передзвонити й домовитися про час;</li>
+        <li>зручний час (якщо вкажеш) — щоб одразу запропонувати слот.</li>
+      </ul>
+
+      <h2>Навіщо</h2>
+      <p>
+        Тільки щоб зв'язатися з тобою щодо пробного тренування. Ми не робимо розсилок, не передаємо й не продаємо
+        дані третім особам.
+      </p>
+
+      <h2>Хто бачить дані</h2>
+      <p>Адміністратор рецепції й тренер, який проводитиме пробне тренування.</p>
+
+      <h2>Скільки зберігаємо</h2>
+      <p>
+        До 30 днів після заявки. Якщо ти став клієнтом залу, дані переходять у договір абонемента й зберігаються,
+        поки він діє.
+      </p>
+
+      <h2>Cookies і аналітика</h2>
+      <p>Сайт не використовує рекламні cookies і не відстежує тебе.</p>
+
+      <h2>Твої права</h2>
+      <p>
+        Ти можеш будь-коли попросити показати, виправити або видалити свої дані — відповідно до Закону України
+        «Про захист персональних даних». Достатньо подзвонити на
+        <a href="tel:+380000000000">+380 00 000 00 00</a> або сказати на рецепції.
+      </p>
+
+      <p class="updated">Оновлено: 29 вересня 2026</p>
+    </div>
   </div>
 </Base>
 
 <style>
   .page-body {
-    max-width: 800px;
-    padding-bottom: 96px;
+    padding-bottom: var(--space-8);
+  }
+
+  .page-body > * {
+    max-width: 760px;
+  }
+
+  .demo {
+    margin: 0 0 var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    border-left: 4px solid var(--amber);
+    background: var(--concrete);
+  }
+
+  .prose {
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+  }
+
+  .prose h2 {
+    margin: var(--space-5) 0 var(--space-2);
+    font-size: var(--fs-h3);
+    text-transform: uppercase;
+  }
+
+  .prose p,
+  .prose ul {
+    margin: 0 0 var(--space-3);
+  }
+
+  .prose li::marker {
+    color: var(--amber);
+  }
+
+  .prose a {
+    color: var(--amber);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .updated {
+    margin-top: var(--space-5);
+    color: var(--muted);
+    font-size: var(--fs-small);
   }
 </style>
