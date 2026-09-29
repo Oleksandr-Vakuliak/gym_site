@@ -7,8 +7,8 @@
   --amber: #f2a516;
   --rust: #c2462a;
 
-  --font-display: "Sofia Sans Extra Condensed", "Arial Narrow", sans-serif;
-  --font-body: "Sofia Sans", system-ui, sans-serif;
+  --font-display: var(--font-sofia-condensed);
+  --font-body: var(--font-sofia);
 
   --gutter: clamp(16px, 4vw, 48px);
   --max-width: 1280px;

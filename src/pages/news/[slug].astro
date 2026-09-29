@@ -1,0 +1,139 @@
+---
+// Article page: one per Markdown file in src/content/news.
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { formatDate, kindLabel } from '../../utils/news';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('news');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base title={`${post.data.title} — SECTOR FITNESS`} description={post.data.excerpt}>
+  <article class="container article">
+    <header class="article__head">
+      <p class="article__meta">
+        <span class:list={['kind', `kind--${post.data.kind}`]}>{kindLabel[post.data.kind]}</span>
+        <time datetime={post.data.date.toISOString().slice(0, 10)}>{formatDate(post.data.date)}</time>
+      </p>
+      <h1>{post.data.title}</h1>
+      <p class="article__lead">{post.data.excerpt}</p>
+    </header>
+
+    <div class="article__cover">
+      {post.data.cover ? (
+        <Image src={post.data.cover} alt={post.data.coverAlt ?? ''} widths={[800, 1200]} sizes="(min-width: 900px) 800px, 100vw" />
+      ) : (
+        <Placeholder label="[ФОТО: обкладинка статті]" ratio="16 / 9" />
+      )}
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="article__foot">
+      <a class="back" href="/news">← Усі новини й події</a>
+      <a class="btn btn--primary" href="/#booking">Записатися на пробне</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .article {
+    max-width: calc(760px + 2 * var(--gutter));
+    padding-block: clamp(48px, 8vw, 96px) var(--space-8);
+  }
+
+  .article__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+
+  .kind {
+    padding: 2px 8px;
+    border: 2px solid var(--concrete);
+    color: var(--chalk);
+    font: 700 1rem / 1.1 var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .kind--event {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .article__lead {
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-lead);
+    color: var(--muted);
+  }
+
+  .article__cover {
+    margin-block: var(--space-5);
+  }
+
+  .article__cover :global(img) {
+    width: 100%;
+    height: auto;
+    filter: saturate(0.82) contrast(1.02);
+  }
+
+  .prose {
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+  }
+
+  .prose :global(h2) {
+    margin: var(--space-6) 0 var(--space-2);
+    font-size: var(--fs-h3);
+    text-transform: uppercase;
+  }
+
+  .prose :global(p),
+  .prose :global(ul) {
+    margin: 0 0 var(--space-3);
+  }
+
+  .prose :global(li) {
+    margin-bottom: var(--space-1);
+  }
+
+  .prose :global(li::marker) {
+    color: var(--amber);
+  }
+
+  .prose :global(a) {
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  .article__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 2px dashed var(--concrete);
+  }
+
+  .back {
+    font-weight: 600;
+  }
+</style>

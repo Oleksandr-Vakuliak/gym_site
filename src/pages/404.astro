@@ -1,11 +1,67 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageIntro from '../components/PageIntro.astro';
 ---
 
 <Base title="Сторінку не знайдено — SECTOR FITNESS">
-  <PageIntro meta="404" title="Такого сектору в залі немає">
-    <p>[ТЕКСТ: коротко, що сторінку не знайдено]</p>
-    <p><a class="btn btn--primary" href="/">На головну</a></p>
-  </PageIntro>
+  <div class="container lost">
+    <p class="lost__code" aria-hidden="true">404</p>
+    <p class="lost__meta">Помилка 404</p>
+    <h1>Такого сектору в залі немає.</h1>
+    <p class="lost__text">Можливо, посилання застаріло або в адресі помилка. Ось куди можна піти звідси:</p>
+    <ul class="lost__links">
+      <li><a class="btn btn--primary" href="/">На головну</a></li>
+      <li><a class="btn btn--ghost" href="/schedule">Розклад</a></li>
+      <li><a class="btn btn--ghost" href="/news">Новини</a></li>
+    </ul>
+  </div>
 </Base>
+
+<style>
+  .lost {
+    position: relative;
+    padding-block: clamp(64px, 12vw, 160px);
+  }
+
+  /* big outlined number, same as the sector letters on the map */
+  .lost__code {
+    position: absolute;
+    top: 50%;
+    right: var(--gutter);
+    z-index: -1;
+    margin: 0;
+    transform: translateY(-50%);
+    color: transparent;
+    -webkit-text-stroke: 2px var(--concrete);
+    font: 900 clamp(8rem, 30vw, 22rem) / 0.8 var(--font-display);
+  }
+
+  .lost__meta {
+    margin: 0 0 12px;
+    color: var(--amber);
+    font-weight: 600;
+    font-size: var(--fs-small);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 14ch;
+    font-size: var(--fs-display);
+  }
+
+  .lost__text {
+    max-width: 44ch;
+    margin: var(--space-4) 0;
+    font-size: var(--fs-lead);
+    color: var(--muted);
+  }
+
+  .lost__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

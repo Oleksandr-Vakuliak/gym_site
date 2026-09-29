@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { Font } from 'astro:assets';
 import '../styles/global.css';
 
 interface Props {
@@ -21,13 +22,17 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <!-- sitemap, canonical and og:image need the final domain — added with the deploy task -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="uk_UA" />
+    <meta property="og:site_name" content="SECTOR FITNESS" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="theme-color" content="#1d2023" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@700;900&family=Sofia+Sans:wght@400;600;700&display=swap"
-    />
+    <!-- preload only what the first screen needs: hero headline + body text, Cyrillic -->
+    <Font cssVariable="--font-sofia-condensed" preload={[{ weight: 900, subset: 'cyrillic' }]} />
+    <Font cssVariable="--font-sofia" preload={[{ weight: 400, subset: 'cyrillic' }]} />
   </head>
   <body>
     <a class="skip-link btn btn--primary" href="#main">Перейти до змісту</a>

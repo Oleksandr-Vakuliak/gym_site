@@ -1,9 +1,7 @@
 ---
-// Skeleton of the home page: every approved section as a labelled grey block.
-// Real layout replaces each block section by section (see GitHub Issues).
+// Home page: sections in the approved order (see CLAUDE.md «Structure»).
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
-import Placeholder from '../components/Placeholder.astro';
 import Hero from '../components/Hero.astro';
 import Ticker from '../components/Ticker.astro';
 import Interior from '../components/Interior.astro';
@@ -14,16 +12,11 @@ import Prices from '../components/Prices.astro';
 import Coaches from '../components/Coaches.astro';
 import Events from '../components/Events.astro';
 import Bar from '../components/Bar.astro';
+import Gallery from '../components/Gallery.astro';
+import Faq from '../components/Faq.astro';
+import BookingForm from '../components/BookingForm.astro';
+import Contacts from '../components/Contacts.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
-
-const faq = [
-  'Я ніколи не був у залі. Мені можна?',
-  'Що взяти на перше тренування?',
-  'Чи є роздягальні й душ?',
-  'Можна заморозити абонемент?',
-  'З якого віку можна тренуватися?',
-  'Чи є парковка?',
-];
 ---
 
 <Base title="SECTOR FITNESS — зал у Львові, пробне тренування безкоштовно" overlayHeader>
@@ -65,32 +58,18 @@ const faq = [
     <Bar />
   </Section>
 
-  <Section num={11} name="Галерея" title="Галерея" full>
-    <div class="gallery" tabindex="0" role="region" aria-label="Галерея фото, прокручується вбік">
-      {[1, 2, 3].map((row) => (
-        <div class="gallery__row">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <Placeholder label={`[ФОТО ${row}.${n}]`} ratio={n % 2 ? '3 / 2' : '4 / 5'} />
-          ))}
-        </div>
-      ))}
-    </div>
-    <p class="container note">Горизонтальне прокручування коліщатком миші, фото відкривається без обрізання.</p>
+  <Section id="gallery" num={11} name="Галерея" title="Зазирни до залу." full>
+    <Gallery />
   </Section>
 
-  <Section num={12} name="FAQ" title="Часті питання">
-    <ul class="list">
-      {faq.map((q) => <li>{q}</li>)}
-    </ul>
+  <Section id="faq" num={12} name="FAQ" title="Питання, які соромно поставити.">
+    <Faq />
   </Section>
 
-  <Section id="contacts" num={13} name="Запис на пробне + контакти" title="Запишись на пробне тренування">
-    <div class="split" id="booking">
-      <Placeholder label="[ФОРМА: ім'я, телефон · стани: заповнення, надсилання, успіх, помилка]" ratio="4 / 3" />
-      <div>
-        <Placeholder label="[СТИЛІЗОВАНА МАПА без реальної мітки]" ratio="4 / 3" />
-        <p>м. Львів, вул. Атлетична, 12 · +380 00 000 00 00 · щодня 7:00–23:00</p>
-      </div>
+  <Section id="contacts" num={13} name="Запис і контакти" title="Перше тренування — безкоштовно.">
+    <div class="split">
+      <BookingForm />
+      <Contacts />
     </div>
   </Section>
 </Base>
@@ -98,48 +77,14 @@ const faq = [
 <style>
   .split {
     display: grid;
-    gap: 24px;
+    gap: var(--space-6);
+    margin-top: var(--space-5);
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     .split {
       grid-template-columns: 1fr 1fr;
+      gap: var(--space-7);
     }
-  }
-
-  .list {
-    display: grid;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .list li {
-    padding: 14px 16px;
-    border: 2px dashed var(--concrete);
-    font-weight: 600;
-  }
-
-  .gallery {
-    display: grid;
-    gap: 12px;
-    overflow-x: auto;
-    padding-inline: var(--gutter);
-  }
-
-  .gallery__row {
-    display: flex;
-    gap: 12px;
-  }
-
-  .gallery__row :global(.placeholder) {
-    flex: none;
-    height: 200px;
-  }
-
-  .note {
-    color: var(--muted);
-    font-size: 0.9375rem;
   }
 </style>

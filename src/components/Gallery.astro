@@ -1,0 +1,287 @@
+---
+// Gallery: three rows that scroll sideways together (mouse wheel, touch, keyboard).
+// A photo opens in a lightbox that always shows the whole picture — never cropped.
+// Content: src/data/gallery.json. Items without `photo` render as placeholders
+// until real photos arrive; sector photos stand in for now.
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Placeholder from './Placeholder.astro';
+import gallery from '../data/gallery.json';
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/**/*.jpg', { eager: true });
+
+type Item = { photo?: string; alt?: string; placeholder?: string; ratio?: string };
+
+const rows = await Promise.all(
+  gallery.rows.map((row: Item[]) =>
+    Promise.all(
+      row.map(async (item) => {
+        const src = item.photo ? files[`../assets/${item.photo}`]?.default : undefined;
+        if (!src) return { ...item, src: undefined, full: undefined };
+        const full = await getImage({ src, width: Math.min(src.width, 1920), format: 'webp' });
+        return { ...item, src, full: full.src };
+      }),
+    ),
+  ),
+);
+---
+
+<div class="gallery" tabindex="0" role="region" aria-label="Галерея: прокручується вбік коліщатком миші, свайпом або стрілками">
+  {rows.map((row) => (
+    <ul class="gallery__row">
+      {row.map((item) => (
+        <li class="gallery__item">
+          {item.src ? (
+            <button
+              class="gallery__open"
+              type="button"
+              data-full={item.full}
+              data-alt={item.alt}
+              aria-label={`Відкрити фото: ${item.alt}`}
+            >
+              <Image src={item.src} alt="" widths={[240, 360, 540]} sizes="(min-width: 900px) 360px, 240px" />
+            </button>
+          ) : (
+            <Placeholder label={item.placeholder ?? '[ФОТО]'} ratio={item.ratio} />
+          )}
+        </li>
+      ))}
+    </ul>
+  ))}
+</div>
+
+<dialog class="lightbox" aria-label="Перегляд фото">
+  <img class="lightbox__img" alt="" />
+  <p class="lightbox__caption"></p>
+  <button class="lightbox__btn lightbox__close" type="button" aria-label="Закрити">✕</button>
+  <button class="lightbox__btn lightbox__prev" type="button" aria-label="Попереднє фото">←</button>
+  <button class="lightbox__btn lightbox__next" type="button" aria-label="Наступне фото">→</button>
+</dialog>
+
+<script>
+  const scroller = document.querySelector<HTMLElement>('.gallery');
+  const dialog = document.querySelector<HTMLDialogElement>('.lightbox');
+
+  if (scroller && dialog) {
+    // Vertical wheel scrolls the gallery sideways; at either end the page scrolls on.
+    scroller.addEventListener(
+      'wheel',
+      (e) => {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+        const max = scroller.scrollWidth - scroller.clientWidth;
+        const atStart = scroller.scrollLeft <= 0 && e.deltaY < 0;
+        const atEnd = scroller.scrollLeft >= max - 1 && e.deltaY > 0;
+        if (atStart || atEnd) return;
+        e.preventDefault();
+        scroller.scrollLeft += e.deltaY;
+      },
+      { passive: false },
+    );
+
+    const buttons = [...scroller.querySelectorAll<HTMLButtonElement>('.gallery__open')];
+    const img = dialog.querySelector<HTMLImageElement>('.lightbox__img')!;
+    const caption = dialog.querySelector<HTMLElement>('.lightbox__caption')!;
+    let current = 0;
+    let opener: HTMLButtonElement | null = null;
+
+    const show = (i: number) => {
+      current = (i + buttons.length) % buttons.length;
+      const b = buttons[current];
+      img.src = b.dataset.full!;
+      img.alt = b.dataset.alt!;
+      caption.textContent = `${b.dataset.alt} · ${current + 1} / ${buttons.length}`;
+    };
+
+    buttons.forEach((b, i) =>
+      b.addEventListener('click', () => {
+        opener = b;
+        show(i);
+        dialog.showModal();
+      }),
+    );
+
+    dialog.querySelector('.lightbox__close')!.addEventListener('click', () => dialog.close());
+    dialog.querySelector('.lightbox__prev')!.addEventListener('click', () => show(current - 1));
+    dialog.querySelector('.lightbox__next')!.addEventListener('click', () => show(current + 1));
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(current - 1);
+      if (e.key === 'ArrowRight') show(current + 1);
+    });
+    // click on the dark backdrop closes, clicks on the photo don't
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', () => opener?.focus());
+  }
+</script>
+
+<style>
+  .gallery {
+    display: grid;
+    gap: var(--space-2);
+    /* first photo lines up with the section title, the rows bleed off the right edge */
+    --inset: max(var(--gutter), calc((100% - var(--max-width)) / 2 + var(--gutter)));
+    padding: 0 var(--inset) var(--space-3);
+    scroll-padding-inline: var(--inset);
+    overflow-x: auto;
+    scrollbar-color: var(--concrete) transparent;
+  }
+
+  .gallery__row {
+    display: flex;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .gallery__item {
+    flex: none;
+    height: 170px;
+  }
+
+  @media (min-width: 900px) {
+    .gallery__item {
+      height: 260px;
+    }
+  }
+
+  .gallery__item :global(.placeholder) {
+    height: 100%;
+    font-size: var(--fs-small);
+  }
+
+  .gallery__open {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: var(--concrete);
+    cursor: zoom-in;
+    isolation: isolate;
+  }
+
+  .gallery__open :global(img) {
+    height: 100%;
+    width: auto;
+    filter: saturate(0.7) contrast(1.08) brightness(0.95);
+    transition: filter 0.2s;
+  }
+
+  .gallery__open::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--amber);
+    mix-blend-mode: soft-light;
+    opacity: 0.14;
+    pointer-events: none;
+  }
+
+  .gallery__open:hover :global(img) {
+    filter: saturate(0.85) contrast(1.08);
+  }
+
+  .gallery__open:focus-visible {
+    outline-offset: -3px;
+  }
+
+  /* lightbox */
+  .lightbox {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    /* phones: room at the bottom for the arrow buttons below the caption */
+    padding: var(--space-6) var(--space-2) 76px;
+    border: 0;
+    background: rgb(15 17 19 / 0.96);
+    color: var(--chalk);
+  }
+
+  .lightbox[open] {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    justify-items: center;
+    gap: var(--space-2);
+  }
+
+  .lightbox::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  .lightbox__img {
+    /* contain = the whole photo, nothing cut off */
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: contain;
+  }
+
+  .lightbox__caption {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    text-align: center;
+  }
+
+  .lightbox__btn {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--concrete);
+    border-radius: var(--radius);
+    background: var(--graphite);
+    color: var(--chalk);
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+
+  .lightbox__btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .lightbox__close {
+    top: var(--space-2);
+    right: var(--space-2);
+  }
+
+  .lightbox__prev,
+  .lightbox__next {
+    bottom: var(--space-2);
+  }
+
+  .lightbox__prev {
+    left: var(--space-2);
+  }
+
+  .lightbox__next {
+    right: var(--space-2);
+  }
+
+  @media (min-width: 900px) {
+    .lightbox {
+      padding: var(--space-6) var(--space-8) var(--space-4);
+    }
+
+    .lightbox__prev,
+    .lightbox__next {
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+
+    .lightbox__prev {
+      left: var(--space-4);
+    }
+
+    .lightbox__next {
+      right: var(--space-4);
+    }
+  }
+</style>

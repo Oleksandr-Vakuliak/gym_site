@@ -1,23 +1,337 @@
 ---
+// Weekly group schedule. Desktop: the whole week as 7 columns.
+// Phones: day tabs (today selected), one day at a time. Content: src/data/schedule.json.
 import Base from '../layouts/Base.astro';
 import PageIntro from '../components/PageIntro.astro';
-import Placeholder from '../components/Placeholder.astro';
+import schedule from '../data/schedule.json';
+
+type ClassKey = keyof typeof schedule.classes;
+const cls = (key: string) => schedule.classes[key as ClassKey];
 ---
 
-<Base title="Розклад групових занять — SECTOR FITNESS">
-  <PageIntro meta="Сторінка · Розклад" title="Розклад групових занять">
-    <p>Зал працює щодня 7:00–23:00.</p>
+<Base
+  title="Розклад групових занять — SECTOR FITNESS"
+  description="Розклад групових занять SECTOR FITNESS у Львові: функціонал, розтяжка, кор, силова база для новачків."
+>
+  <PageIntro meta="Розклад" title="Групові заняття на тиждень">
+    <p class="lead">Зал відкритий щодня 7:00–23:00. Нижче — заняття в студії з тренером.</p>
   </PageIntro>
+
   <div class="container page-body">
-    <Placeholder
-      label="[РОЗКЛАД: тиждень Пн–Нд · на мобільному вкладки по днях · дані з docs/content.md]"
-      ratio="16 / 7"
-    />
+    <div class="schedule">
+      <div class="tabs" role="tablist" aria-label="День тижня">
+        {schedule.week.map((d, i) => (
+          <button
+            class="tab"
+            type="button"
+            role="tab"
+            id={`tab-${i}`}
+            aria-controls={`day-${i}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            {d.day}
+          </button>
+        ))}
+      </div>
+
+      <div class="week">
+        {schedule.week.map((d, i) => (
+          <section class:list={['day', { 'is-active': i === 0 }]} id={`day-${i}`} role="tabpanel" aria-labelledby={`tab-${i}`}>
+            <h2 class="day__name">{d.name}</h2>
+            {d.slots.length ? (
+              <ol class="slots">
+                {d.slots.map(([time, key]) => (
+                  <li class="slot">
+                    <p class="slot__time"><time>{time}</time> <span class="slot__min">{cls(key).minutes} хв</span></p>
+                    <h3 class="slot__title">{cls(key).title}</h3>
+                    <p class="slot__coach">{cls(key).coach}</p>
+                    <p class="slot__plate"><span>{cls(key).sector}</span> · {cls(key).level}</p>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p class="day__empty">Групових занять немає. Зал відкритий — приходь тренуватися сам.</p>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+
+    <p class="note">{schedule.note}</p>
+
+    <section class="about" aria-labelledby="about-title">
+      <h2 id="about-title">Що за заняття</h2>
+      <dl class="about__list">
+        {Object.values(schedule.classes).map((c) => (
+          <div class="about__item">
+            <dt>{c.title}</dt>
+            <dd>
+              <p>{c.text}</p>
+              <p class="about__meta">{c.minutes} хв · {c.level} · {c.coach}</p>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <div class="cta">
+      <p>Не знаєш, що обрати? На пробному тренер підкаже, з якого заняття почати.</p>
+      <a class="btn btn--primary" href="/#booking">Записатися на пробне</a>
+    </div>
   </div>
 </Base>
 
+<script>
+  // Tabs (phones only — on desktop the tab bar is hidden and all days show).
+  const root = document.querySelector<HTMLElement>('.schedule');
+  if (root) {
+    root.classList.add('has-tabs');
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+
+    const select = (i: number, focus = false) => {
+      tabs.forEach((t, j) => {
+        t.setAttribute('aria-selected', String(i === j));
+        t.tabIndex = i === j ? 0 : -1;
+        panels[j].classList.toggle('is-active', i === j);
+      });
+      if (focus) tabs[i].focus();
+    };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        const n = tabs.length;
+        const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: n - 1 }[e.key];
+        if (next === undefined) return;
+        e.preventDefault();
+        select((next + n) % n, true);
+      });
+    });
+
+    // open today's day: getDay() is 0 for Sunday, the week here starts on Monday
+    const today = (new Date().getDay() + 6) % 7;
+    panels[today].classList.add('is-today');
+    select(today);
+  }
+</script>
+
 <style>
   .page-body {
-    padding-bottom: 96px;
+    display: grid;
+    gap: var(--space-6);
+    padding-bottom: var(--space-8);
+  }
+
+  .lead {
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-lead);
+    color: var(--muted);
+  }
+
+  /* tabs */
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: var(--space-4);
+  }
+
+  .tab {
+    min-height: 48px;
+    padding: 0;
+    border: 2px solid var(--concrete);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--chalk);
+    font: 700 1.25rem / 1 var(--font-display);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .tab[aria-selected='true'] {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--graphite);
+  }
+
+  .schedule:not(.has-tabs) .tabs {
+    display: none;
+  }
+
+  .has-tabs .day:not(.is-active) {
+    display: none;
+  }
+
+  .week {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 900px) {
+    .tabs {
+      display: none;
+    }
+
+    .week {
+      grid-template-columns: repeat(7, 1fr);
+      gap: var(--space-2);
+      border-top: 2px dashed var(--amber);
+    }
+
+    .has-tabs .day:not(.is-active) {
+      display: block;
+    }
+  }
+
+  .day__name {
+    margin: 0 0 var(--space-2);
+    padding-top: var(--space-2);
+    font-size: var(--fs-h3);
+    text-transform: uppercase;
+  }
+
+  .is-today .day__name {
+    color: var(--amber);
+  }
+
+  .slots {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .slot {
+    padding: var(--space-3);
+    background: var(--concrete);
+    border-left: 4px solid var(--amber);
+  }
+
+  .slot p {
+    margin: 0;
+  }
+
+  .slot__time {
+    color: var(--amber);
+    font: 900 2rem / 1 var(--font-display);
+  }
+
+  .slot__min {
+    color: var(--muted);
+    font: 400 var(--fs-small) var(--font-body);
+  }
+
+  .slot__title {
+    margin: var(--space-1) 0 4px;
+    font-size: 1.375rem;
+    text-transform: uppercase;
+  }
+
+  .slot__coach {
+    font-size: var(--fs-small);
+  }
+
+  .slot .slot__plate {
+    margin-top: var(--space-1);
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+
+  .slot__plate span {
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  .day__empty {
+    margin: 0;
+    padding: var(--space-3);
+    border: 2px dashed var(--concrete);
+    color: var(--muted);
+  }
+
+  @media (min-width: 900px) {
+    .slot {
+      padding: var(--space-2);
+    }
+
+    .slot__title {
+      font-size: 1.125rem;
+    }
+
+    .day__empty {
+      padding: var(--space-2);
+      font-size: var(--fs-small);
+    }
+  }
+
+  .note {
+    margin: 0;
+    max-width: 70ch;
+    color: var(--muted);
+  }
+
+  .about h2 {
+    font-size: var(--fs-h2);
+  }
+
+  .about__list {
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-4) 0 0;
+  }
+
+  @media (min-width: 700px) {
+    .about__list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5) var(--space-6);
+    }
+  }
+
+  .about__item {
+    padding-top: var(--space-2);
+    border-top: 2px dashed var(--concrete);
+  }
+
+  .about__item dt {
+    font: 700 var(--fs-h3) / 1.1 var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .about__item dd {
+    margin: var(--space-1) 0 0;
+  }
+
+  .about__item p {
+    margin: 0;
+  }
+
+  .about__item .about__meta {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+
+  .cta {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    padding: var(--space-4);
+    border: 2px dashed var(--amber);
+  }
+
+  .cta p {
+    margin: 0;
+    font-size: var(--fs-lead);
+  }
+
+  @media (min-width: 900px) {
+    .cta {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: var(--space-5);
+    }
   }
 </style>
