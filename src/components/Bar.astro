@@ -1,0 +1,176 @@
+---
+// Protein bar: sector F photo + a short menu. Compact on purpose — it's a
+// side detail of the gym, not a café. Content: src/data/bar.json.
+// Photo is the sector F image (AI-generated), so it gets the «less plastic» grade.
+import { Picture } from 'astro:assets';
+import bar from '../data/bar.json';
+import barPhoto from '../assets/sectors/sector-f-bar.jpg';
+---
+
+<div class="bar">
+  <div class="bar__media">
+    <div class="bar__photo">
+      <Picture
+        src={barPhoto}
+        alt="Протеїн-бар: стійка з барними стільцями, шейкерами й фруктами"
+        formats={['avif', 'webp']}
+        widths={[480, 720, 1080]}
+        sizes="(min-width: 900px) 50vw, 100vw"
+      />
+    </div>
+    <a class="bar__plate" href="#sectors"><span class="bar__letter">F</span> · Протеїн-бар</a>
+  </div>
+
+  <div class="bar__menu">
+    <p class="bar__text">{bar.text}</p>
+    {bar.groups.map((g) => (
+      <section aria-labelledby={`bar-${g.title}`}>
+        <h3 class="bar__title" id={`bar-${g.title}`}>{g.title}</h3>
+        <dl class="bar__list">
+          {g.items.map((it) => (
+            <div class="item">
+              <dt class="item__name">
+                {it.name}
+                {'note' in it && <span class="item__note">{it.note}</span>}
+              </dt>
+              <dd class="item__price">{it.price}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))}
+  </div>
+</div>
+
+<style>
+  .bar {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+  }
+
+  @media (min-width: 900px) {
+    .bar {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: var(--space-7);
+    }
+  }
+
+  .bar__media {
+    position: relative;
+  }
+
+  .bar__photo {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--concrete);
+    isolation: isolate;
+  }
+
+  .bar__photo :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.7) contrast(1.08) brightness(0.95);
+  }
+
+  .bar__photo::before,
+  .bar__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .bar__photo::before {
+    background: var(--amber);
+    mix-blend-mode: soft-light;
+    opacity: 0.14;
+  }
+
+  .bar__photo::after {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.45) 100%);
+    mix-blend-mode: overlay;
+  }
+
+  .bar__plate {
+    z-index: 1;
+    position: absolute;
+    left: var(--space-2);
+    bottom: var(--space-2);
+    padding: 4px 10px;
+    background: var(--graphite);
+    border: 2px solid var(--amber);
+    font: 700 1.125rem / 1.1 var(--font-display);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .bar__letter {
+    color: var(--amber);
+  }
+
+  .bar__menu {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .bar__text {
+    margin: 0;
+    font-size: var(--fs-lead);
+  }
+
+  .bar__title {
+    margin: 0 0 var(--space-2);
+    font-size: var(--fs-h3);
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  .bar__list {
+    margin: 0;
+  }
+
+  .item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding-block: 10px;
+    border-bottom: 1px solid var(--concrete);
+  }
+
+  .item::after {
+    content: '';
+    order: 1;
+    flex: 1;
+    min-width: var(--space-4);
+    border-bottom: 2px dashed var(--concrete);
+    transform: translateY(-0.3em);
+  }
+
+  .item__name {
+    order: 0;
+    font-weight: 600;
+  }
+
+  .item__note {
+    display: block;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    font-weight: 400;
+  }
+
+  .item__price {
+    order: 2;
+    margin: 0;
+    font: 900 1.625rem / 1 var(--font-display);
+    white-space: nowrap;
+  }
+</style>
