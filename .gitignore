@@ -28,3 +28,5 @@ assets/originals/
 
 # photo with unknown source/license, keep local until confirmed
 docs/design/sample-photo.jpg
+.vercel
+.env*
