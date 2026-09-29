@@ -1,0 +1,179 @@
+---
+// Price board: the free trial is an amber plate on top (it's the site's main
+// action), the rest reads like a list on the gym wall — name, dashed leader, price.
+// Content lives in src/data/prices.json so the owner can edit it without touching markup.
+import prices from '../data/prices.json';
+---
+
+<div class="prices">
+  <div class="trial">
+    <div>
+      <p class="trial__name">{prices.trial.name}</p>
+      <p class="trial__note">{prices.trial.note}</p>
+    </div>
+    <p class="trial__price">Безкоштовно</p>
+    <a class="btn trial__btn" href="#booking">Записатися на пробне</a>
+  </div>
+
+  <div class="board">
+    {prices.groups.map((g) => (
+      <section class="board__group" aria-labelledby={`prices-${g.title}`}>
+        <h3 class="board__title" id={`prices-${g.title}`}>{g.title}</h3>
+        <dl class="board__list">
+          {g.items.map((it) => (
+            <div class="row">
+              <dt class="row__name">
+                {it.name}
+                {'note' in it && <span class="row__note">{it.note}</span>}
+              </dt>
+              <dd class="row__price">
+                {it.price}
+                {'unit' in it && <span class="row__unit">/ {it.unit}</span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))}
+  </div>
+
+  <p class="corporate">
+    {prices.corporate} <a href="#contacts">Напиши нам →</a>
+  </p>
+</div>
+
+<style>
+  .prices {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-5);
+  }
+
+  /* free trial plate */
+  .trial {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--amber);
+    color: var(--graphite);
+    border-radius: var(--radius);
+  }
+
+  .trial p {
+    margin: 0;
+  }
+
+  .trial__name {
+    font: 900 var(--fs-h3) / 1 var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .trial .trial__note {
+    margin-top: var(--space-1);
+    max-width: 40ch;
+  }
+
+  .trial__price {
+    font: 900 clamp(2.5rem, 2rem + 2.5vw, 4rem) / 0.9 var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .trial__btn {
+    justify-self: start;
+    background: var(--graphite);
+    color: var(--chalk);
+  }
+
+  .trial__btn:focus-visible {
+    outline-color: var(--graphite);
+  }
+
+  @media (min-width: 900px) {
+    .trial {
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-5) var(--space-6);
+    }
+  }
+
+  /* wall board */
+  .board {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 900px) {
+    .board {
+      grid-template-columns: 1.3fr 1fr;
+      gap: var(--space-7);
+    }
+  }
+
+  .board__title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--fs-h3);
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  .board__list {
+    margin: 0;
+  }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding-block: var(--space-2);
+    border-bottom: 1px solid var(--concrete);
+  }
+
+  /* dashed leader between name and price, like floor marking */
+  .row::after {
+    content: '';
+    order: 1;
+    flex: 1;
+    min-width: var(--space-4);
+    border-bottom: 2px dashed var(--concrete);
+    transform: translateY(-0.3em);
+  }
+
+  .row__name {
+    order: 0;
+    font-weight: 600;
+  }
+
+  .row__note {
+    display: block;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    font-weight: 400;
+  }
+
+  .row__price {
+    order: 2;
+    margin: 0;
+    font: 900 clamp(1.75rem, 1.5rem + 1vw, 2.25rem) / 1 var(--font-display);
+    white-space: nowrap;
+  }
+
+  .row__unit {
+    margin-left: 4px;
+    color: var(--muted);
+    font: 400 var(--fs-small) var(--font-body);
+  }
+
+  .corporate {
+    margin: 0;
+    padding-top: var(--space-4);
+    border-top: 2px dashed var(--concrete);
+    color: var(--muted);
+  }
+
+  .corporate a {
+    color: var(--amber);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+</style>

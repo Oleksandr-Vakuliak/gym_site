@@ -10,9 +10,10 @@ import Interior from '../components/Interior.astro';
 import Sectors from '../components/Sectors.astro';
 import StartSteps from '../components/StartSteps.astro';
 import Services from '../components/Services.astro';
+import Prices from '../components/Prices.astro';
+import Coaches from '../components/Coaches.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
 
-const coaches = ['Андрій Коваль', 'Марта Гнатюк', 'Остап Мельник', 'Соломія Бойко'];
 const faq = [
   'Я ніколи не був у залі. Мені можна?',
   'Що взяти на перше тренування?',
@@ -46,19 +47,12 @@ const faq = [
     <Services />
   </Section>
 
-  <Section id="prices" num={7} name="Ціни" title="Ціни">
-    <Placeholder label="[ТАБЛИЦЯ ЦІН: 7 позицій із docs/content.md] + рядок про корпоративні абонементи" ratio="16 / 6" />
+  <Section id="prices" num={7} name="Ціни" title="Ціни без дрібного шрифту.">
+    <Prices />
   </Section>
 
-  <Section num={8} name="Тренери" title="Тренери">
-    <div class="grid grid--4">
-      {coaches.map((c) => (
-        <div>
-          <Placeholder label="[ФОТО: тренер, пояс або повний зріст]" ratio="3 / 4" />
-          <h3 class="card-title">{c}</h3>
-        </div>
-      ))}
-    </div>
+  <Section id="coaches" num={8} name="Тренери" title="Люди, які будуть поруч.">
+    <Coaches />
   </Section>
 
   <Section id="events" num={9} name="Івенти" title="Вечори, коли зал звучить інакше." full>
@@ -130,16 +124,6 @@ const faq = [
     .grid--3 {
       grid-template-columns: repeat(3, 1fr);
     }
-
-    .grid--4 {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  @media (min-width: 480px) and (max-width: 767px) {
-    .grid--4 {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
 
   .box {
@@ -148,11 +132,6 @@ const faq = [
     background: var(--concrete);
     border-radius: var(--radius);
     font-weight: 600;
-  }
-
-  .card-title {
-    margin-top: 12px;
-    font-size: 1.75rem;
   }
 
   .list {
