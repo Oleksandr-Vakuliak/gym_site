@@ -1,0 +1,333 @@
+---
+// Trial booking form: name + phone (+ preferred time). States: filling → sending →
+// success or error. The gym is fictional, so sending is a demo: nothing leaves the
+// browser. Add `?demo=error` to the URL to see the error state.
+// To make it real later, set `endpoint` to a form service URL (POST, FormData).
+interface Props {
+  endpoint?: string;
+}
+const { endpoint = '' } = Astro.props;
+---
+
+<div class="booking" id="booking">
+  <form class="form" novalidate data-endpoint={endpoint}>
+    <p class="form__lead">Залиш контакти — тренер передзвонить і домовиться про час.</p>
+
+    <div class="field">
+      <label for="bk-name">Ім'я</label>
+      <input id="bk-name" name="name" type="text" autocomplete="given-name" required aria-describedby="bk-name-err" />
+      <p class="field__err" id="bk-name-err"></p>
+    </div>
+
+    <div class="field">
+      <label for="bk-phone">Телефон</label>
+      <input
+        id="bk-phone"
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        placeholder="+380"
+        required
+        aria-describedby="bk-phone-err"
+      />
+      <p class="field__err" id="bk-phone-err"></p>
+    </div>
+
+    <fieldset class="field times">
+      <legend>Коли зручніше прийти <span class="optional">— необов'язково</span></legend>
+      <div class="times__options">
+        {['Зранку', 'Вдень', 'Увечері'].map((t) => (
+          <label class="time">
+            <input type="radio" name="time" value={t} />
+            <span>{t}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <p class="form__error" role="alert" hidden>
+      Не вдалося надіслати заявку. Спробуй ще раз або подзвони: <a href="tel:+380000000000">+380 00 000 00 00</a>.
+    </p>
+
+    <button class="btn btn--primary form__submit" type="submit">Записатися на пробне</button>
+    <p class="form__status visually-hidden" aria-live="polite"></p>
+
+    <p class="form__note">
+      Надсилаючи форму, ти погоджуєшся з <a href="/privacy">політикою конфіденційності</a>.
+      Це демо-сайт: заявка нікуди не надсилається.
+    </p>
+  </form>
+
+  <div class="success" tabindex="-1" hidden>
+    <p class="success__plate">Заявку прийнято</p>
+    <p class="success__title">Дякуємо<span class="success__name"></span>!</p>
+    <p>Тренер передзвонить сьогодні або завтра зранку, щоб домовитися про час. Нічого купувати не треба.</p>
+    <button class="btn btn--ghost success__again" type="button">Надіслати ще одну заявку</button>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.booking');
+  const form = root?.querySelector<HTMLFormElement>('.form');
+
+  if (root && form) {
+    const success = root.querySelector<HTMLElement>('.success')!;
+    const errorBox = form.querySelector<HTMLElement>('.form__error')!;
+    const submit = form.querySelector<HTMLButtonElement>('.form__submit')!;
+    const status = form.querySelector<HTMLElement>('.form__status')!;
+    const name = form.querySelector<HTMLInputElement>('#bk-name')!;
+    const phone = form.querySelector<HTMLInputElement>('#bk-phone')!;
+    const submitLabel = submit.textContent;
+
+    // Ukrainian mobile: 0XX XXX XX XX, with or without +38 and spaces/dashes/brackets
+    const phoneOk = (v: string) => /^(\+?38)?0\d{9}$/.test(v.replace(/[\s()-]/g, ''));
+
+    const checks: [HTMLInputElement, (v: string) => string][] = [
+      [name, (v) => (v.trim().length < 2 ? 'Напиши, як до тебе звертатися.' : '')],
+      [phone, (v) => (!v.trim() ? 'Потрібен телефон, щоб тренер міг передзвонити.' : phoneOk(v) ? '' : 'Схоже на помилку. Приклад: 067 123 45 67.')],
+    ];
+
+    const validate = (input: HTMLInputElement, rule: (v: string) => string) => {
+      const msg = rule(input.value);
+      input.setAttribute('aria-invalid', String(Boolean(msg)));
+      document.getElementById(input.getAttribute('aria-describedby')!)!.textContent = msg;
+      return !msg;
+    };
+
+    // after the first failed submit, fix messages as the visitor types
+    checks.forEach(([input, rule]) =>
+      input.addEventListener('input', () => {
+        if (input.getAttribute('aria-invalid') === 'true') validate(input, rule);
+      }),
+    );
+
+    const send = async (data: FormData) => {
+      const endpoint = form.dataset.endpoint;
+      if (endpoint) {
+        const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error(String(res.status));
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 1200));
+      if (new URLSearchParams(location.search).get('demo') === 'error') throw new Error('demo');
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.hidden = true;
+      const results = checks.map(([input, rule]) => validate(input, rule));
+      const firstBad = checks[results.indexOf(false)]?.[0];
+      if (firstBad) {
+        firstBad.focus();
+        return;
+      }
+
+      submit.disabled = true;
+      submit.textContent = 'Надсилаємо…';
+      status.textContent = 'Надсилаємо заявку';
+      try {
+        await send(new FormData(form));
+        root.querySelector('.success__name')!.textContent = `, ${name.value.trim()}`;
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+      } catch {
+        errorBox.hidden = false;
+        status.textContent = '';
+      } finally {
+        submit.disabled = false;
+        submit.textContent = submitLabel;
+      }
+    });
+
+    root.querySelector('.success__again')!.addEventListener('click', () => {
+      form.reset();
+      success.hidden = true;
+      form.hidden = false;
+      name.focus();
+    });
+  }
+</script>
+
+<style>
+  .booking {
+    padding: var(--space-4);
+    background: var(--concrete);
+    border-top: 4px solid var(--amber);
+    border-radius: var(--radius);
+  }
+
+  @media (min-width: 900px) {
+    .booking {
+      padding: var(--space-5);
+    }
+  }
+
+  .form {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .form[hidden] {
+    display: none;
+  }
+
+  .form__lead {
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-lead);
+  }
+
+  .field {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  label,
+  legend {
+    padding: 0;
+    font-weight: 600;
+  }
+
+  .optional {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  input[type='text'],
+  input[type='tel'] {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 2px solid #5b6268;
+    border-radius: var(--radius);
+    background: var(--graphite);
+    color: var(--chalk);
+    font: inherit;
+  }
+
+  input::placeholder {
+    color: #858c92;
+  }
+
+  input:hover {
+    border-color: var(--muted);
+  }
+
+  input[aria-invalid='true'] {
+    border-color: #ff8a6b;
+  }
+
+  .field__err {
+    margin: 0;
+    color: #ff9d82;
+    font-size: var(--fs-small);
+  }
+
+  .field__err:empty {
+    display: none;
+  }
+
+  .times__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-top: 6px;
+  }
+
+  /* radio buttons styled as sign plates */
+  .time input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .time span {
+    display: block;
+    padding: 8px 14px;
+    border: 2px solid #5b6268;
+    border-radius: var(--radius);
+    font: 700 1.125rem / 1.1 var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+
+  .time input:checked + span {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--graphite);
+  }
+
+  .time input:focus-visible + span {
+    outline: 3px solid var(--chalk);
+    outline-offset: 3px;
+  }
+
+  .form__error {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-left: 4px solid var(--rust);
+    background: rgb(194 70 42 / 0.18);
+  }
+
+  .form__error a {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .form__submit {
+    justify-self: start;
+    margin-top: var(--space-1);
+  }
+
+  .form__submit:disabled {
+    background: var(--graphite);
+    color: var(--muted);
+    cursor: progress;
+  }
+
+  .form__note {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+
+  .success {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+  }
+
+  .success[hidden] {
+    display: none;
+  }
+
+  .success p {
+    margin: 0;
+    max-width: 44ch;
+  }
+
+  .success__plate {
+    padding: 4px 10px;
+    background: var(--amber);
+    color: var(--graphite);
+    font: 700 1.125rem / 1.1 var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .success__title {
+    font: 900 var(--fs-h3) / 1 var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .success:focus {
+    outline: none;
+  }
+
+  .success__again {
+    margin-top: var(--space-2);
+  }
+</style>

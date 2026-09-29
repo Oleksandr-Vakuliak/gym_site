@@ -1,9 +1,7 @@
 ---
-// Skeleton of the home page: every approved section as a labelled grey block.
-// Real layout replaces each block section by section (see GitHub Issues).
+// Home page: sections in the approved order (see CLAUDE.md «Structure»).
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
-import Placeholder from '../components/Placeholder.astro';
 import Hero from '../components/Hero.astro';
 import Ticker from '../components/Ticker.astro';
 import Interior from '../components/Interior.astro';
@@ -16,6 +14,8 @@ import Events from '../components/Events.astro';
 import Bar from '../components/Bar.astro';
 import Gallery from '../components/Gallery.astro';
 import Faq from '../components/Faq.astro';
+import BookingForm from '../components/BookingForm.astro';
+import Contacts from '../components/Contacts.astro';
 import interiorPhoto from '../assets/interior-gym.jpg';
 ---
 
@@ -66,13 +66,10 @@ import interiorPhoto from '../assets/interior-gym.jpg';
     <Faq />
   </Section>
 
-  <Section id="contacts" num={13} name="Запис на пробне + контакти" title="Запишись на пробне тренування">
-    <div class="split" id="booking">
-      <Placeholder label="[ФОРМА: ім'я, телефон · стани: заповнення, надсилання, успіх, помилка]" ratio="4 / 3" />
-      <div>
-        <Placeholder label="[СТИЛІЗОВАНА МАПА без реальної мітки]" ratio="4 / 3" />
-        <p>м. Львів, вул. Атлетична, 12 · +380 00 000 00 00 · щодня 7:00–23:00</p>
-      </div>
+  <Section id="contacts" num={13} name="Запис і контакти" title="Перше тренування — безкоштовно.">
+    <div class="split">
+      <BookingForm />
+      <Contacts />
     </div>
   </Section>
 </Base>
@@ -80,12 +77,14 @@ import interiorPhoto from '../assets/interior-gym.jpg';
 <style>
   .split {
     display: grid;
-    gap: 24px;
+    gap: var(--space-6);
+    margin-top: var(--space-5);
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     .split {
       grid-template-columns: 1fr 1fr;
+      gap: var(--space-7);
     }
   }
 </style>
